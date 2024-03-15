@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button, View, Text, FlatList} from 'react-native';
+import {Button, View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {ListItem, Avatar} from '@rneui/themed';
 
 function Home({navigation}) {
@@ -8,9 +8,11 @@ function Home({navigation}) {
     const [error, setError] = useState(null);
     const [expanded, setExpanded] = useState(new Array(0).fill(false));
     const [currentPage, setCurrentPage] = useState(1);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const getApiData = async (page) => {
         try {
+            setIsLoadingMore(true);
             const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
             const result = await response.json();
             setData(prevData => [...prevData, ...result.results]);
@@ -19,6 +21,8 @@ function Home({navigation}) {
         } catch (error) {
             setError(error);
             setIsLoaded(true);
+        } finally {
+            setIsLoadingMore(false);
         }
     };
 
@@ -75,6 +79,13 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
+                    onEndReached={loadMoreData}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={
+                        isLoadingMore ? (
+                            <ActivityIndicator size="small" color="#0000ff" />
+                        ) : null
+                    }
                 />
                 <Button
                     title="Load More"
