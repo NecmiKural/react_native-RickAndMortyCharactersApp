@@ -3,16 +3,17 @@ import {Button, View, Text, FlatList} from 'react-native';
 import {ListItem, Avatar} from '@rneui/themed';
 
 function Home({navigation}) {
-    const [data, setData] = useState(undefined);
+    const [data, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [expanded, setExpanded] = useState(new Array(0).fill(false));
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const getApiData = async () => {
+    const getApiData = async (page) => {
         try {
-            const response = await fetch('https://rickandmortyapi.com/api/episode');
+            const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
             const result = await response.json();
-            setData(result);
+            setData(prevData => [...prevData, ...result.results]);
             setExpanded(new Array(result.info.count).fill(false));
             setIsLoaded(true);
         } catch (error) {
@@ -21,9 +22,13 @@ function Home({navigation}) {
         }
     };
 
+    const loadMoreData = () => {
+        setCurrentPage(prevPage => prevPage + 1);
+    };
+
     useEffect(() => {
-        getApiData();
-    }, [data]);
+        getApiData(currentPage);
+    }, [currentPage]);
 
     const renderItem = ({item, index}) => (
         <ListItem.Accordion
@@ -67,13 +72,13 @@ function Home({navigation}) {
         return (
             <View style={{flex: 1}}>
                 <FlatList
-                    data={data.results}
+                    data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                 />
                 <Button
-                    title="Go to Details"
-                    onPress={() => navigation.navigate('Episodes')}
+                    title="Load More"
+                    onPress={loadMoreData}
                 />
             </View>
         );
