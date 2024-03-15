@@ -27,7 +27,9 @@ function Home({navigation}) {
     };
 
     const loadMoreData = () => {
-        setCurrentPage(prevPage => prevPage + 1);
+        if (currentPage < 3) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
     };
 
     useEffect(() => {
@@ -79,7 +81,7 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                    onEndReached={loadMoreData}
+                    //onEndReached={loadMoreData}
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         isLoadingMore ? (
@@ -90,6 +92,7 @@ function Home({navigation}) {
                 <Button
                     title="Load More"
                     onPress={loadMoreData}
+                    disabled={currentPage >= 3}
                 />
             </View>
         );
