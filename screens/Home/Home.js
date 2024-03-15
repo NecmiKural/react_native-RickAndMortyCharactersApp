@@ -7,20 +7,20 @@ function Home({navigation}) {
     const [data, setData] = React.useState(undefined);
     const [isLoaded, setIsLoaded] = React.useState(false);
     const [error, setError] = React.useState(null);
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = React.useState(new Array(0).fill(false));
 
     const getApiData = async () => {
-        await fetch('https://rickandmortyapi.com/api/episode')
-            .then((response) => response.json())
-            .then((result) => {
-                setData(result);
-                setIsLoaded(true);
-            }, (error) => {
-                setError(error);
-                setIsLoaded(true);
-            });
-        console.log(data);
-    }
+        try {
+            const response = await fetch('https://rickandmortyapi.com/api/episode');
+            const result = await response.json();
+            setData(result);
+            setExpanded(new Array(result.info.count).fill(false));
+            setIsLoaded(true);
+        } catch (error) {
+            setError(error);
+            setIsLoaded(true);
+        }
+    };
 
     React.useEffect(() => {
         getApiData();
@@ -34,45 +34,37 @@ function Home({navigation}) {
         return (
             <View>
                 {
-                    data.map(item => (
+                    data.results.map((item, index) => (
                         <ListItem.Accordion
+                            key={index}
                             content={
                                 <ListItem.Content>
                                     <ListItem.Title>
-                                        {item.results.name}
+                                        Episode Name: {item.name}
                                     </ListItem.Title>
-                                    <ListItem.Subtitle>Tap to expand</ListItem.Subtitle>
+                                    <ListItem.Subtitle>Episode: {item.episode}</ListItem.Subtitle>
                                 </ListItem.Content>
                             }
-                            isExpanded={expanded}
+                            isExpanded={expanded[index]}
                             onPress={() => {
-                                setExpanded(!expanded);
+                                setExpanded(expanded.map((value, i) => i === index ? !value : value));
                             }}
                         >
-                            <ListItem>
-                                <Avatar
-                                    rounded
-                                    source={{
-                                        uri: "https://randomuser.me/api/portraits/men/32.jpg",
-                                    }}
-                                />
-                                <ListItem.Content>
-                                    <ListItem.Title>John Doe</ListItem.Title>
-                                    <ListItem.Subtitle>Principle Engineer</ListItem.Subtitle>
-                                </ListItem.Content>
-                            </ListItem>
-                            <ListItem>
-                                <Avatar
-                                    rounded
-                                    source={{
-                                        uri: "https://randomuser.me/api/portraits/men/36.jpg",
-                                    }}
-                                />
-                                <ListItem.Content>
-                                    <ListItem.Title>Albert</ListItem.Title>
-                                    <ListItem.Subtitle>Staff Engineer</ListItem.Subtitle>
-                                </ListItem.Content>
-                            </ListItem>
+                            {
+                                item.characters.map((character, i) => (
+                                    <ListItem key={i}>
+                                        <Avatar
+                                            rounded
+                                            source={{
+                                                uri: character[i],
+                                            }}
+                                        />
+                                        <ListItem.Content>
+                                            <ListItem.Title>John Doe</ListItem.Title>
+                                            <ListItem.Subtitle>Principle Engineer</ListItem.Subtitle>
+                                        </ListItem.Content>
+                                    </ListItem>))
+                            }
                         </ListItem.Accordion>
                     ))
                 }
