@@ -81,7 +81,7 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                    //onEndReached={loadMoreData}
+                    onEndReached={loadMoreData}
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         isLoadingMore ? (
