@@ -23,9 +23,10 @@ function Home({navigation}) {
     const getApiData = async (page) => {
         try {
             setIsLoadingMore(true);
+            const itemsPerPage = page === 1 ? 11 : 10;
             const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
             const result = await response.json();
-            setData(prevData => [...prevData, ...result.results]);
+            setData(prevData => [...prevData, ...result.results.slice(0, itemsPerPage)]);
             setIsLoaded(true);
         } catch (error) {
             setError(error);
@@ -82,9 +83,15 @@ function Home({navigation}) {
         </ListItem>
     );
 
+    const totalItems = data.length;
+    const totalPages = Math.ceil(totalItems / (currentPage === 1 ? 11 : 10));
+
+
     const paginationProps = {
-        totalItems: 41, // Replace this with the actual total number of items
-        itemsPerPage: 20,
+        totalItems,
+        itemsPerPage: currentPage === 1 ? 11 : 10,
+        currentPage,
+        totalPages,
         onPageChange: (page) => {
             setCurrentPage(page);
         },
