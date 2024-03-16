@@ -1,8 +1,16 @@
 import React, {useState, useEffect} from 'react';
-import {Button, View, Text, FlatList, ActivityIndicator} from 'react-native';
-import {ListItem, Avatar} from '@rneui/themed';
-import FavoritesButton from "../../components/FavoritesButton";
+import {
+    Button,
+    View,
+    Text,
+    FlatList,
+    ActivityIndicator,
+    StyleSheet,
+} from 'react-native';
+import {ListItem} from '@rneui/themed';
+import FavoritesButton from '../../components/FavoritesButton';
 import SearchBar from '../../components/SearchBar';
+import Pagination from '../../components/Pagination';
 
 function Home({navigation}) {
     const [data, setData] = useState([]);
@@ -36,9 +44,9 @@ function Home({navigation}) {
     };
 
     const searchEpisodes = async (searchTerm) => {
-        if(searchTerm ===""){
+        if (searchTerm === "") {
             getApiData(currentPage);
-        } else{
+        } else {
             try {
                 setIsLoadingMore(true);
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
@@ -73,26 +81,19 @@ function Home({navigation}) {
             }
             isExpanded={expanded[index]}
             onPress={() => {
-                // setExpanded(expanded.map((value, i) => i === index ? !value : value));
                 navigation.navigate('Episodes', {episodeId: item.id});
             }}
         >
-            {/*{*/}
-            {/*    item.characters.map((character, i) => (*/}
-            {/*        <ListItem key={i}>*/}
-            {/*            <Avatar*/}
-            {/*                rounded*/}
-            {/*                source={{*/}
-            {/*                    uri: character.image,*/}
-            {/*                }}*/}
-            {/*            />*/}
-            {/*            <ListItem.Content>*/}
-            {/*                <ListItem.Title>John Doe</ListItem.Title>*/}
-            {/*            </ListItem.Content>*/}
-            {/*        </ListItem>))*/}
-            {/*}*/}
         </ListItem.Accordion>
     );
+
+    const paginationProps = {
+        totalItems: 41, // Replace this with the actual total number of items
+        itemsPerPage: 20,
+        onPageChange: (page) => {
+            setCurrentPage(page);
+        },
+    };
 
     if (error) {
         return <Text>Error: {error.message}</Text>;
@@ -100,7 +101,7 @@ function Home({navigation}) {
         return <Text>Loading...</Text>;
     } else {
         return (
-            <View style={{flex: 1}}>
+            <View style={styles.container}>
                 <SearchBar holder={"Search Episodes"} term={searchTerm} onTermChange={setSearchTerm}
                            onTermSubmit={() => searchEpisodes(searchTerm)}/>
                 <FlatList
@@ -115,14 +116,17 @@ function Home({navigation}) {
                         ) : null
                     }
                 />
-                <Button
-                    title="Load More"
-                    onPress={loadMoreData}
-                    disabled={currentPage >= 3}
-                />
+                <Pagination {...paginationProps} />
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+    },
+});
 
 export default Home;
