@@ -37,9 +37,7 @@ function Home({navigation}) {
     };
 
     const loadMoreData = () => {
-        if (currentPage < 3) {
-            setCurrentPage(prevPage => prevPage + 1);
-        }
+        setCurrentPage(prevPage => prevPage + 1);
     };
 
     const searchEpisodes = async (searchTerm) => {
