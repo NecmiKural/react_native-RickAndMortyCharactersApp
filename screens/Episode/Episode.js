@@ -48,7 +48,7 @@ function Episodes({route}) {
                 data={characters}
                 renderItem={({item}) =>
                     <Card>
-                        <Card.Title>Characters</Card.Title>
+                        <Card.Title>{item.name}</Card.Title>
                         <Card.Divider/>
                         <View style={styles.user}>
                             <Image
@@ -56,7 +56,7 @@ function Episodes({route}) {
                                 resizeMode="cover"
                                 source={{uri: item.image}}
                             />
-                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.name}>Species: {item.species}</Text>
                         </View>
                     </Card>
                 }
