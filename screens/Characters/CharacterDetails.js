@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import FavoritesButton from "../../components/FavoritesButton";
 import {useDispatch, useSelector} from 'react-redux';
 import {addFavorite, removeFavorite} from '../../redux/actions/actions';
-import PushNotification from 'react-native-push-notification';
+import {selectFavorites} from '../../redux/selectors/selector';
 
-const selectFavorites = (state) => state.favorites.favorites;
+// const selectFavorites = (state) => state.favorites.favorites;
 
 function CharacterDetails() {
     const dispatch = useDispatch();
     const favorites = useSelector(selectFavorites) || [];
+    // const checkFavorites = useSelector(selectFavorites);
     const character = useRoute().params.character;
     const [favoritesState, setFavoritesState] = useState(favorites);
     const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
@@ -19,23 +20,7 @@ function CharacterDetails() {
 
     const [characterData, setCharacterData] = useState(null);
 
-    useEffect(() => {
-        PushNotification.configure({
-            onRegister: function (token) {
-                console.log('TOKEN:', token);
-            },
-            onNotification: function (notification) {
-                console.log('NOTIFICATION:', notification);
-            },
-            permissions: {
-                alert: true,
-                badge: true,
-                sound: true,
-            },
-            popInitialNotification: true,
-            requestPermissions: true,
-        });
-    }, []);
+
 
     useEffect(() => {
         setCharacterData(character);
@@ -53,15 +38,30 @@ function CharacterDetails() {
     }, [favoritesState, character]);
 
     const handleFavoritePress = () => {
+        // // console.log(favorites.length);
+        // // console.log(favoritesState.length);
+        console.log(favoritesState);
+        // console.log(checkFavorites);
+        // console.log(setFavoritesState);
         if (isFavorite) {
             dispatch(removeFavorite(character));
             setFavoritesState(favoritesState.filter((favorite) => favorite.id !== character.id));
         } else {
             if (favoritesState.length >= 10) {
                 // Show error with Local Notification
-                PushNotification.localNotification({
-                    message: 'Favori karakter ekleme sayısını aştınız. Başka bir karakteri favorilerden çıkarmalısınız.',
-                });
+                // PushNotification.localNotification({
+                //     message: 'Favori karakter ekleme sayısını aştınız. Başka bir karakteri favorilerden çıkarmalısınız.',
+                // });
+                Alert.alert(
+                    'Maximum number of favorites reached',
+                    'You can only have up to 10 favorites.',
+                    [
+                        {
+                            text: 'OK',
+                        },
+                    ],
+                    {cancelable: false}
+                );
                 return;
             }
             dispatch(addFavorite(character));

@@ -12,6 +12,7 @@ function Favorites() {
     const dispatch = useDispatch();
 
     const handleRemoveFavorite = (character) => {
+        console.log(favorites);
         // Show confirmation dialog
         Alert.alert(
             'Remove Favorite',
