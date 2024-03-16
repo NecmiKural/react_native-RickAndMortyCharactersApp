@@ -16,32 +16,23 @@ function Home({navigation}) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [episodes, setEpisodes] = useState([]);
 
     const getApiData = async (page) => {
         if (page <= 3) {
             try {
-                setIsLoadingMore(true);
                 const itemsPerPage = page === 1 ? 11 : 10;
                 const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
                 const result = await response.json();
+                setEpisodes(prevItems => [...prevItems, ...result.results]);
+                console.log(episodes.length);
                 setData(prevData => [...prevData, ...result.results.slice(0, itemsPerPage)]);
                 setIsLoaded(true);
-                console.log(data.length);
-
             } catch (error) {
                 setError(error);
                 setIsLoaded(true);
-            } finally {
-                setIsLoadingMore(false);
             }
-        }
-    };
-
-    const loadMoreData = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
         }
     };
 
@@ -50,7 +41,6 @@ function Home({navigation}) {
             getApiData(currentPage);
         } else {
             try {
-                setIsLoadingMore(true);
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
                 const result = await response.json();
                 setData(result.results);
@@ -58,14 +48,20 @@ function Home({navigation}) {
             } catch (error) {
                 setError(error);
                 setIsLoaded(true);
-            } finally {
-                setIsLoadingMore(false);
             }
         }
     };
 
+    const loadMoreData = () => {
+        if (currentPage < 3) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
+
     useEffect(() => {
+
         getApiData(currentPage);
+
         navigation.setOptions({headerRight: () => <FavoritesButton navigation={navigation}/>});
     }, [currentPage]);
 
@@ -92,7 +88,10 @@ function Home({navigation}) {
         itemsPerPage: currentPage === 1 ? 11 : 10,
         currentPage,
         totalPages,
-        onPageChange: loadMoreData,
+        // onPageChange: (page) => {
+        //     setCurrentPage(page);
+        // }
+        onPageChange: loadMoreData
     };
 
     if (error) {
@@ -109,8 +108,7 @@ function Home({navigation}) {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                 />
-                <Pagination {...paginationProps}
-                            onPageChange={loadMoreData}/>
+                <Pagination {...paginationProps}/>
             </View>
         );
     }

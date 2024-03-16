@@ -11,10 +11,11 @@ type PaginationProps = {
 const Pagination: React.FC<PaginationProps> = ({
                                                    totalItems,
                                                    itemsPerPage,
+                                                   totalPages,
                                                    currentPage,
                                                    onPageChange,
                                                }) => {
-    const totalPages = Math.ceil((totalItems - (currentPage === 1 ? 11 : 0)) / itemsPerPage) + 1;
+
 
     const handlePrevPage = () => {
         if (currentPage > 1) {
