@@ -1,6 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
-import {Icon} from '@rneui/themed';
+import {Text} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
 
 function FavoritesButton() {
@@ -9,7 +9,8 @@ function FavoritesButton() {
     return (
         <TouchableOpacity onPress={() => navigation.navigate('Favorites')}>
             <View style={{marginRight: 16}}>
-                <Icon name="favorite" type="material" color="red" />
+                {/*<Icon name="favorite" type="material" color="red" />*/}
+                <Text>Favorites</Text>
             </View>
         </TouchableOpacity>
     );
