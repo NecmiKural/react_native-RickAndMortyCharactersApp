@@ -1,10 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {
-    Button,
     View,
     Text,
     FlatList,
-    ActivityIndicator,
     StyleSheet, TouchableOpacity,
 } from 'react-native';
 import {ListItem} from '@rneui/themed';
@@ -37,7 +35,9 @@ function Home({navigation}) {
     };
 
     const loadMoreData = () => {
-        setCurrentPage(prevPage => prevPage + 1);
+
+            setCurrentPage(prevPage => prevPage + 1);
+
     };
 
     const searchEpisodes = async (searchTerm) => {
