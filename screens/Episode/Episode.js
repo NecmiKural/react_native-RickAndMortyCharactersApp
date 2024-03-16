@@ -1,16 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, View } from 'react-native';
-import { Avatar, ListItem, Text } from '@rneui/themed';
+import React, {useEffect, useState} from 'react';
+import {FlatList, Image, StyleSheet, View} from 'react-native';
+import {Avatar, ListItem, Text} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
-import { useNavigation } from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
+import SearchBar from '../../components/SearchBar';
 
-function Episodes({ route }) {
+function Episodes({route}) {
     const navigation = useNavigation();
-    const { episodeId } = route.params;
+    const {episodeId} = route.params;
     const [episode, setEpisode] = useState(null);
     const [characters, setCharacters] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const handleCharacterPress = (character) => {
-        navigation.navigate('CharacterDetails', { character });
+        navigation.navigate('CharacterDetails', {character});
+    };
+
+    const searchCharacters = async (searchTerm) => {
+        try {
+            const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${searchTerm}`);
+            const result = await response.json();
+            setCharacters(result.results);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     useEffect(() => {
@@ -18,7 +30,7 @@ function Episodes({ route }) {
             const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
             const data = await response.json();
             setEpisode(data);
-            navigation.setOptions({ title: data.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
+            navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
         };
 
         fetchEpisode();
@@ -44,9 +56,11 @@ function Episodes({ route }) {
 
     return (
         <View>
+            <SearchBar term={searchTerm} onTermChange={setSearchTerm}
+                       onTermSubmit={() => searchCharacters(searchTerm)}/>
             <FlatList
                 data={characters}
-                renderItem={({ item }) => (
+                renderItem={({item}) => (
                     <ListItem key={item.id} onPress={() => handleCharacterPress(item)}>
                         <Avatar
                             rounded

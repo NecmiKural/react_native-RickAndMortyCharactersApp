@@ -35,7 +35,7 @@ function Home({navigation}) {
         }
     };
 
-    const searchCharacters = async (searchTerm) => {
+    const searchEpisodes = async (searchTerm) => {
         try {
             setIsLoadingMore(true);
             const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
@@ -99,7 +99,7 @@ function Home({navigation}) {
         return (
             <View style={{flex: 1}}>
                 <SearchBar term={searchTerm} onTermChange={setSearchTerm}
-                           onTermSubmit={() => searchCharacters(searchTerm)}/>
+                           onTermSubmit={() => searchEpisodes(searchTerm)}/>
                 <FlatList
                     data={data}
                     renderItem={renderItem}
