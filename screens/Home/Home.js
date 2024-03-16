@@ -50,6 +50,7 @@ function Home({navigation}) {
             isExpanded={expanded[index]}
             onPress={() => {
                 setExpanded(expanded.map((value, i) => i === index ? !value : value));
+                navigation.navigate('Episodes', {episodeId: item.id}); // pass episode id to navigation function
             }}
         >
             {
@@ -85,7 +86,7 @@ function Home({navigation}) {
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         isLoadingMore ? (
-                            <ActivityIndicator size="small" color="#0000ff" />
+                            <ActivityIndicator size="small" color="#0000ff"/>
                         ) : null
                     }
                 />
