@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, Image, StyleSheet, View} from 'react-native';
-import {Card, ListItem, Text} from '@rneui/themed';
+import {Avatar, Card, ListItem, Text} from '@rneui/themed';
 
-function Episodes({route}) {
+function Episodes({route, navigation }) {
     const {episodeId} = route.params;
     const [episode, setEpisode] = useState(null);
     const [characters, setCharacters] = useState([]);
+    const handleCharacterPress = (character) => {
+        navigation.navigate('CharacterDetails', { character });
+    };
 
     useEffect(() => {
         const fetchEpisode = async () => {
@@ -46,20 +49,19 @@ function Episodes({route}) {
             </ListItem>
             <FlatList
                 data={characters}
-                renderItem={({item}) =>
-                    <Card>
-                        <Card.Title>{item.name}</Card.Title>
-                        <Card.Divider/>
-                        <View style={styles.user}>
-                            <Image
-                                style={styles.image}
-                                resizeMode="cover"
-                                source={{uri: item.image}}
-                            />
-                            <Text style={styles.name}>Species: {item.species}</Text>
-                        </View>
-                    </Card>
-                }
+                renderItem={({ item }) => (
+                    <ListItem key={item.id} onPress={() => handleCharacterPress(item)}>
+                        <Avatar
+                            rounded
+                            source={{
+                                uri: item.image,
+                            }}
+                        />
+                        <ListItem.Content>
+                            <ListItem.Title>{item.name}</ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
+                )}
                 keyExtractor={item => item.id.toString()}
             />
         </View>
