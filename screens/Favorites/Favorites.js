@@ -47,19 +47,18 @@ function Favorites() {
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({item}) => (
                             <ListItem>
-                                <Avatar
-                                    rounded
-                                    source={{
-                                        uri: item.image,
-                                    }}
-                                />
-                                <TouchableOpacity onPress={() => handleFavoritePress(item)}>
+                                <TouchableOpacity onPress={() => handleFavoritePress(item)} style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    <Avatar
+                                        rounded
+                                        source={{
+                                            uri: item.image,
+                                        }}
+                                    />
                                     <ListItem.Content>
                                         <ListItem.Title>{item.name}</ListItem.Title>
                                     </ListItem.Content>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)}
-                                                  style={{marginLeft: 'auto'}}>
+                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)} style={{marginLeft: 'auto'}}>
                                     <Icon
                                         name='trash'
                                         type='font-awesome'
