@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View} from 'react-native';
-import {Avatar, Card, ListItem, Text} from '@rneui/themed';
+import {FlatList, StyleSheet, View} from 'react-native';
+import {Avatar, ListItem, Text} from '@rneui/themed';
+import {useNavigation} from '@react-navigation/native';
 
-function Episodes({route, navigation }) {
+function Episodes({route}) {
+    const navigation = useNavigation();
     const {episodeId} = route.params;
     const [episode, setEpisode] = useState(null);
     const [characters, setCharacters] = useState([]);
     const handleCharacterPress = (character) => {
-        navigation.navigate('CharacterDetails', { character });
+        navigation.navigate('CharacterDetails', {character});
     };
 
     useEffect(() => {
@@ -15,10 +17,11 @@ function Episodes({route, navigation }) {
             const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
             const data = await response.json();
             setEpisode(data);
+            navigation.setOptions({title: data.name});
         };
 
         fetchEpisode();
-    }, [episodeId]);
+    }, [episodeId, navigation]);
 
     useEffect(() => {
         const fetchCharacters = async () => {
@@ -40,16 +43,9 @@ function Episodes({route, navigation }) {
 
     return (
         <View>
-            <ListItem>
-                <ListItem.Content>
-                    <ListItem.Title>Name: {episode.name}</ListItem.Title>
-                    <ListItem.Subtitle>Episode: {episode.episode}</ListItem.Subtitle>
-                    <ListItem.Subtitle >Characters</ListItem.Subtitle>
-                </ListItem.Content>
-            </ListItem>
             <FlatList
                 data={characters}
-                renderItem={({ item }) => (
+                renderItem={({item}) => (
                     <ListItem key={item.id} onPress={() => handleCharacterPress(item)}>
                         <Avatar
                             rounded

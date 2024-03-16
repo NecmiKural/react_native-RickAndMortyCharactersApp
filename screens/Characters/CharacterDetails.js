@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-function CharacterDetails({ route }) {
+function CharacterDetails() {
+    const navigation = useNavigation();
+    const route = useRoute();
     const { character } = route.params;
 
     const [characterData, setCharacterData] = useState(null);
 
     useEffect(() => {
         setCharacterData(character);
-    }, [character]);
+        navigation.setOptions({ title: character.name });
+    }, [character, navigation]);
 
     if (!characterData) {
         return <Text>Loading...</Text>;

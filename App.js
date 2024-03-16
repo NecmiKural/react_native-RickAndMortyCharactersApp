@@ -12,8 +12,8 @@ export default function App() {
   return (
       <NavigationContainer>
           <Stack.Navigator initialRouteName="Home">
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Episodes" component={Episodes} />
+              <Stack.Screen name="Home" component={Home} options={{ title: 'R&M Episodes' }}/>
+              <Stack.Screen name="Episodes" component={Episodes} options={{ title: 'Episode' }}/>
               <Stack.Screen name="CharacterDetails" component={CharacterDetails} options={{ title: 'Character' }}  />
           </Stack.Navigator>
       </NavigationContainer>
