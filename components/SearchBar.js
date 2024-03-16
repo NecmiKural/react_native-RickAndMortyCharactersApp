@@ -1,14 +1,13 @@
-import React from 'react';
-import {View, TextInput, StyleSheet, TouchableOpacity, Button} from 'react-native';
+import { TextInput, StyleSheet, TouchableOpacity, Button} from 'react-native';
 
-const SearchBar = ({term, onTermChange, onTermSubmit}) => {
+const SearchBar = ({term, onTermChange, onTermSubmit, holder}) => {
     return (
         <TouchableOpacity style={styles.backgroundStyle} onPress={onTermSubmit}>
             <TextInput
                 autoCapitalize="none"
                 autoCorrect={false}
                 style={styles.inputStyle}
-                placeholder="Search"
+                placeholder={holder}
                 value={term}
                 onChangeText={onTermChange}
             />

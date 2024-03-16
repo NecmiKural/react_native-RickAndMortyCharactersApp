@@ -16,12 +16,16 @@ function Episodes({route}) {
     };
 
     const searchCharacters = async (searchTerm) => {
-        try {
-            const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${searchTerm}`);
-            const result = await response.json();
-            setCharacters(result.results);
-        } catch (error) {
-            console.error(error);
+        if (searchTerm === "") {
+            setCharacters([]);
+        } else {
+            try {
+                const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${searchTerm}`);
+                const result = await response.json();
+                setCharacters(result.results);
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
@@ -56,7 +60,7 @@ function Episodes({route}) {
 
     return (
         <View>
-            <SearchBar term={searchTerm} onTermChange={setSearchTerm}
+            <SearchBar holder={"Search Characters"} term={searchTerm} onTermChange={setSearchTerm}
                        onTermSubmit={() => searchCharacters(searchTerm)}/>
             <ListItem>
                 <ListItem.Content>
