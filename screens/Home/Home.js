@@ -88,7 +88,7 @@ function Home({navigation}) {
     const totalPages = 5;
 
     const paginationProps = {
-        totalItems: data.length+1,
+        totalItems: data.length + 1,
         itemsPerPage: currentPage === 1 ? 11 : 10,
         currentPage,
         totalPages,
