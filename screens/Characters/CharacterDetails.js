@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import FavoritesButton from "../../components/FavoritesButton";
 
 function CharacterDetails() {
     const navigation = useNavigation();
@@ -11,7 +12,7 @@ function CharacterDetails() {
 
     useEffect(() => {
         setCharacterData(character);
-        navigation.setOptions({ title: character.name });
+        navigation.setOptions({ title: character.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
     }, [character, navigation]);
 
     if (!characterData) {

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Button, View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {ListItem, Avatar} from '@rneui/themed';
+import FavoritesButton from "../../components/FavoritesButton";
 
 function Home({navigation}) {
     const [data, setData] = useState([]);
@@ -34,6 +35,7 @@ function Home({navigation}) {
 
     useEffect(() => {
         getApiData(currentPage);
+        navigation.setOptions({headerRight: () => <FavoritesButton navigation={navigation}/>});
     }, [currentPage]);
 
     const renderItem = ({item, index}) => (
