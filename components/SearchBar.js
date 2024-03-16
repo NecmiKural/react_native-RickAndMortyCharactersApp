@@ -1,9 +1,9 @@
 import React from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {View, TextInput, StyleSheet, TouchableOpacity, Button} from 'react-native';
 
 const SearchBar = ({term, onTermChange, onTermSubmit}) => {
     return (
-        <View style={styles.backgroundStyle}>
+        <TouchableOpacity style={styles.backgroundStyle} onPress={onTermSubmit}>
             <TextInput
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -11,9 +11,9 @@ const SearchBar = ({term, onTermChange, onTermSubmit}) => {
                 placeholder="Search"
                 value={term}
                 onChangeText={onTermChange}
-                onEndEditing={onTermSubmit}
             />
-        </View>
+            <Button title="Search" onPress={onTermSubmit} />
+        </TouchableOpacity>
     );
 };
 
@@ -25,7 +25,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         marginTop: 10,
         flexDirection: 'row',
-        marginBottom: 10,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
     },
     inputStyle: {
         flex: 1,
