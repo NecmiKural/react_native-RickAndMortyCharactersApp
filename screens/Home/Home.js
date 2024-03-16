@@ -35,9 +35,9 @@ function Home({navigation}) {
     };
 
     const loadMoreData = () => {
-
+        if (data.length > 0) {
             setCurrentPage(prevPage => prevPage + 1);
-
+        }
     };
 
     const searchEpisodes = async (searchTerm) => {
@@ -81,8 +81,8 @@ function Home({navigation}) {
         </ListItem>
     );
 
-    const totalItems = data.length;
-    const totalPages = Math.ceil(totalItems / (currentPage === 1 ? 11 : 10));
+    const totalItems = 51;
+    const totalPages = 5;
 
 
     const paginationProps = {
@@ -109,7 +109,8 @@ function Home({navigation}) {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                 />
-                <Pagination {...paginationProps} />
+                <Pagination {...paginationProps}
+                            disabled={currentPage === totalPages}/>
             </View>
         );
     }
