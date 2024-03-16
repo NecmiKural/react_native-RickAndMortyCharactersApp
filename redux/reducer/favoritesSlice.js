@@ -1,4 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
+import {REHYDRATE} from "redux-persist/es/constants";
 
 const initialState = {
     favorites: [],
@@ -7,10 +8,10 @@ const initialState = {
 const favoritesReducer = createReducer(initialState, (builder) => {
     builder
         .addCase('ADD_FAVORITE', (state, action) => {
-            if (state.favorites.length >= 10) {
-                // Show error with Local Notification
-                return state;
-            }
+            // if (state.favorites.length >= 10) {
+            //     // Show error with Local Notification
+            //     return state;
+            // }
             state.favorites.push(action.payload);
         })
         .addCase('REMOVE_FAVORITE', (state, action) => {
