@@ -3,7 +3,7 @@ import {View, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux';
 import {removeFavorite} from '../../redux/actions/actions';
 import {selectFavorites} from '../../redux/selectors/selector';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {Icon, Avatar, ListItem, Text} from "@rneui/themed";
 
 function Favorites() {
@@ -12,8 +12,6 @@ function Favorites() {
     const dispatch = useDispatch();
 
     const handleRemoveFavorite = (character) => {
-        console.log(favorites);
-        // Show confirmation dialog
         Alert.alert(
             'Remove Favorite',
             'Are you sure you want to remove this favorite?',

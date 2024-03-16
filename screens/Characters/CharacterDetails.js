@@ -6,12 +6,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addFavorite, removeFavorite} from '../../redux/actions/actions';
 import {selectFavorites} from '../../redux/selectors/selector';
 
-// const selectFavorites = (state) => state.favorites.favorites;
-
 function CharacterDetails() {
     const dispatch = useDispatch();
     const favorites = useSelector(selectFavorites) || [];
-    // const checkFavorites = useSelector(selectFavorites);
     const character = useRoute().params.character;
     const [favoritesState, setFavoritesState] = useState(favorites);
     const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
@@ -19,7 +16,6 @@ function CharacterDetails() {
     const navigation = useNavigation();
 
     const [characterData, setCharacterData] = useState(null);
-
 
 
     useEffect(() => {
@@ -38,23 +34,19 @@ function CharacterDetails() {
     }, [favoritesState, character]);
 
     const handleFavoritePress = () => {
-        // // console.log(favorites.length);
-        // // console.log(favoritesState.length);
-        console.log(favoritesState);
-        // console.log(checkFavorites);
-        // console.log(setFavoritesState);
+
         if (isFavorite) {
             dispatch(removeFavorite(character));
             setFavoritesState(favoritesState.filter((favorite) => favorite.id !== character.id));
         } else {
-            if (favoritesState.length >= 10) {
+            if (favorites.length >= 10) {
                 // Show error with Local Notification
                 // PushNotification.localNotification({
                 //     message: 'Favori karakter ekleme sayısını aştınız. Başka bir karakteri favorilerden çıkarmalısınız.',
                 // });
                 Alert.alert(
                     'Maximum number of favorites reached',
-                    'You can only have up to 10 favorites.',
+                    'You can only have up to 10 favorites. Remove a character from favorites to add a new one.',
                     [
                         {
                             text: 'OK',
