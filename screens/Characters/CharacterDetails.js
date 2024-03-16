@@ -78,3 +78,49 @@ const styles = StyleSheet.create({
 });
 
 export default CharacterDetails;
+//
+// import {addFavorite, removeFavorite} from './favoritesActions';
+//
+// function CharacterDetails({route, navigation}) {
+//     const {character} = route.params;
+//     const dispatch = useDispatch();
+//     const favorites = useSelector((state) => state.favorites.favorites);
+//
+//     const isFavorite = favorites.some((favorite) => favorite.id === character.id);
+//
+//     const handleFavoritePress = () => {
+//         if (isFavorite) {
+//             dispatch(removeFavorite(character));
+//         } else {
+//             dispatch(addFavorite(character));
+//         }
+//     };
+//
+//     return (
+//         <View>
+//             <FavoritesButton navigation={navigation} />
+//             <Image
+//                 style={styles.image}
+//                 resizeMode="cover"
+//                 source={{uri: character.image}}
+//             />
+//             <Text style={styles.name}>{character.name}</Text>
+//             <Text style={styles.status}>Status: {character.status}</Text>
+//             <Text style={styles.species}>Species: {character.species}</Text>
+//             <Text style={styles.type}>Type: {character.type || 'N/A'}</Text>
+//             <Text style={styles.gender}>Gender: {character.gender}</Text>
+//             <Text style={styles.origin}>Origin: {character.origin.name}</Text>
+//             <Text style={styles.location}>Location: {character.location.name}</Text>
+//             <Button title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'} onPress={handleFavoritePress} />
+//         </View>
+//     );
+// }
+// export const addFavorite = (character) => ({
+//     type: 'ADD_FAVORITE',
+//     payload: character,
+// });
+//
+// export const removeFavorite = (character) => ({
+//     type: 'REMOVE_FAVORITE',
+//     payload: character,
+// });

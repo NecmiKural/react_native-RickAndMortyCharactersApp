@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, Image, StyleSheet, View} from 'react-native';
 import {Avatar, ListItem, Text} from '@rneui/themed';
-import {useNavigation} from '@react-navigation/native';
+import FavoritesButton from '../../components/FavoritesButton';
+import {useNavigation} from "@react-navigation/native";
 
 function Episodes({route}) {
     const navigation = useNavigation();
@@ -9,7 +10,7 @@ function Episodes({route}) {
     const [episode, setEpisode] = useState(null);
     const [characters, setCharacters] = useState([]);
     const handleCharacterPress = (character) => {
-        navigation.navigate('CharacterDetails', {character});
+        navigation.navigate('CharacterDetails', { character });
     };
 
     useEffect(() => {
@@ -43,9 +44,10 @@ function Episodes({route}) {
 
     return (
         <View>
+            <FavoritesButton navigation={navigation} />
             <FlatList
                 data={characters}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                     <ListItem key={item.id} onPress={() => handleCharacterPress(item)}>
                         <Avatar
                             rounded
@@ -76,8 +78,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     image: {
-        width: 50,
-        height: 50,
+        width: 50,height: 50,
         marginRight: 10,
     },
     name: {
