@@ -110,13 +110,6 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                    onEndReached={loadMoreData}
-                    onEndReachedThreshold={0.5}
-                    ListFooterComponent={
-                        isLoadingMore ? (
-                            <ActivityIndicator size="small" color="#0000ff"/>
-                        ) : null
-                    }
                 />
                 <Pagination {...paginationProps} />
             </View>
