@@ -5,19 +5,18 @@ import FavoritesButton from "../../components/FavoritesButton";
 import {useDispatch, useSelector} from 'react-redux';
 import {addFavorite, removeFavorite} from '../../redux/actions/actions';
 
+const selectFavorites = (state) => state.favorites.favorites;
+
 function CharacterDetails() {
     const dispatch = useDispatch();
-    const favorites = useSelector(selectFavorites);
+    const favorites = useSelector(selectFavorites) || [];
     const character = useRoute().params.character;
-    const isFavorite = favorites.some((favorite) => favorite.id === character.id);
+    const [favoritesState, setFavoritesState] = useState(favorites);
+    const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
+
     const navigation = useNavigation();
-    const route = useRoute();
-
-    const selectFavorites = (state) => state.favorites.favorites;
-
 
     const [characterData, setCharacterData] = useState(null);
-
 
     useEffect(() => {
         setCharacterData(character);
@@ -26,22 +25,25 @@ function CharacterDetails() {
 
     useEffect(() => {
         const storedFavorites = // fetch favorites from storage or state
-            setFavorites(storedFavorites || []);
+
+            setFavoritesState(storedFavorites || []);
     }, []);
 
     useEffect(() => {
-        setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
-    }, [favorites, character]);
+        setIsFavorite(favoritesState.some((favorite) => favorite.id === character.id));
+    }, [favoritesState, character]);
 
     const handleFavoritePress = () => {
         if (isFavorite) {
             dispatch(removeFavorite(character));
+            setFavoritesState(favoritesState.filter((favorite) => favorite.id !== character.id));
         } else {
-            if (favorites.length >= 10) {
+            if (favoritesState.length >= 10) {
                 // Show error with Local Notification
                 return;
             }
             dispatch(addFavorite(character));
+            setFavoritesState([...favoritesState, character]);
         }
     };
 
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: 300,
+        height:300,
         marginBottom: 16,
     },
     name: {
