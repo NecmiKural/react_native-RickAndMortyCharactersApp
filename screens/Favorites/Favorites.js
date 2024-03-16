@@ -46,29 +46,27 @@ function Favorites() {
                         data={favorites}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({item}) => (
-                            <ListItem
-                                onPress={() => handleFavoritePress(item)}
-                            >
+                            <ListItem>
                                 <Avatar
                                     rounded
                                     source={{
                                         uri: item.image,
                                     }}
                                 />
-                                <ListItem.Content>
-                                    <ListItem.Title>{item.name}</ListItem.Title>
-                                </ListItem.Content>
-                                <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity onPress={() => handleRemoveFavorite(item)}
-                                                      style={{marginLeft: 'auto'}}>
-                                        <Icon
-                                            name='trash'
-                                            type='font-awesome'
-                                            color='#f50057'
-                                            size={24}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
+                                <TouchableOpacity onPress={() => handleFavoritePress(item)}>
+                                    <ListItem.Content>
+                                        <ListItem.Title>{item.name}</ListItem.Title>
+                                    </ListItem.Content>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)}
+                                                  style={{marginLeft: 'auto'}}>
+                                    <Icon
+                                        name='trash'
+                                        type='font-awesome'
+                                        color='#f50057'
+                                        size={24}
+                                    />
+                                </TouchableOpacity>
                             </ListItem>
                         )
                         }
