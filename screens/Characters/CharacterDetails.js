@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import FavoritesButton from "../../components/FavoritesButton";
 
@@ -9,11 +9,31 @@ function CharacterDetails() {
     const { character } = route.params;
 
     const [characterData, setCharacterData] = useState(null);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
         setCharacterData(character);
         navigation.setOptions({ title: character.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
     }, [character, navigation]);
+
+    useEffect(() => {
+        const storedFavorites = // fetch favorites from storage or state
+            setFavorites(storedFavorites || []);
+    }, []);
+
+    useEffect(() => {
+        setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
+    }, [favorites, character]);
+
+    const handleFavoritePress = () => {
+        if (isFavorite) {
+            // remove from favorites
+        } else {
+            // add to favorites
+        }
+        setIsFavorite(!isFavorite);
+    };
 
     if (!characterData) {
         return <Text>Loading...</Text>;
@@ -33,6 +53,9 @@ function CharacterDetails() {
             <Text style={styles.gender}>Gender: {characterData.gender}</Text>
             <Text style={styles.origin}>Origin: {characterData.origin.name}</Text>
             <Text style={styles.location}>Location: {characterData.location.name}</Text>
+            <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
+                <Text style={styles.favoriteButtonText}>{isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -76,52 +99,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 4,
     },
+    favoriteButton: {
+        backgroundColor: '#4CAF50',
+        padding: 12,
+        borderRadius: 4,
+        marginTop: 16,
+    },
+    favoriteButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        textAlign: 'center',
+    },
 });
 
 export default CharacterDetails;
-//
-// import {addFavorite, removeFavorite} from './favoritesActions';
-//
-// function CharacterDetails({route, navigation}) {
-//     const {character} = route.params;
-//     const dispatch = useDispatch();
-//     const favorites = useSelector((state) => state.favorites.favorites);
-//
-//     const isFavorite = favorites.some((favorite) => favorite.id === character.id);
-//
-//     const handleFavoritePress = () => {
-//         if (isFavorite) {
-//             dispatch(removeFavorite(character));
-//         } else {
-//             dispatch(addFavorite(character));
-//         }
-//     };
-//
-//     return (
-//         <View>
-//             <FavoritesButton navigation={navigation} />
-//             <Image
-//                 style={styles.image}
-//                 resizeMode="cover"
-//                 source={{uri: character.image}}
-//             />
-//             <Text style={styles.name}>{character.name}</Text>
-//             <Text style={styles.status}>Status: {character.status}</Text>
-//             <Text style={styles.species}>Species: {character.species}</Text>
-//             <Text style={styles.type}>Type: {character.type || 'N/A'}</Text>
-//             <Text style={styles.gender}>Gender: {character.gender}</Text>
-//             <Text style={styles.origin}>Origin: {character.origin.name}</Text>
-//             <Text style={styles.location}>Location: {character.location.name}</Text>
-//             <Button title={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'} onPress={handleFavoritePress} />
-//         </View>
-//     );
-// }
-// export const addFavorite = (character) => ({
-//     type: 'ADD_FAVORITE',
-//     payload: character,
-// });
-//
-// export const removeFavorite = (character) => ({
-//     type: 'REMOVE_FAVORITE',
-//     payload: character,
-// });
