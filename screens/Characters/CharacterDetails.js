@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import FavoritesButton from "../../components/FavoritesButton";
+import {useDispatch, useSelector} from 'react-redux';
+import {addFavorite, removeFavorite} from '../../redux/actions/actions';
 
 function CharacterDetails() {
+    const dispatch = useDispatch();
+    const favorites = useSelector(selectFavorites);
+    const character = useRoute().params.character;
+    const isFavorite = favorites.some((favorite) => favorite.id === character.id);
     const navigation = useNavigation();
     const route = useRoute();
-    const { character } = route.params;
+
     const selectFavorites = (state) => state.favorites.favorites;
 
+
     const [characterData, setCharacterData] = useState(null);
-    const [isFavorite, setIsFavorite] = useState(false);
-    const [favorites, setFavorites] = useState([]);
+
 
     useEffect(() => {
         setCharacterData(character);
-        navigation.setOptions({ title: character.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
+        navigation.setOptions({title: character.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
     }, [character, navigation]);
 
     useEffect(() => {
@@ -29,11 +35,14 @@ function CharacterDetails() {
 
     const handleFavoritePress = () => {
         if (isFavorite) {
-            // remove from favorites
+            dispatch(removeFavorite(character));
         } else {
-            // add to favorites
+            if (favorites.length >= 10) {
+                // Show error with Local Notification
+                return;
+            }
+            dispatch(addFavorite(character));
         }
-        setIsFavorite(!isFavorite);
     };
 
     if (!characterData) {
@@ -45,7 +54,7 @@ function CharacterDetails() {
             <Image
                 style={styles.image}
                 resizeMode="cover"
-                source={{ uri: characterData.image }}
+                source={{uri: characterData.image}}
             />
             <Text style={styles.name}>{characterData.name}</Text>
             <Text style={styles.status}>Status: {characterData.status}</Text>
@@ -55,7 +64,8 @@ function CharacterDetails() {
             <Text style={styles.origin}>Origin: {characterData.origin.name}</Text>
             <Text style={styles.location}>Location: {characterData.location.name}</Text>
             <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
-                <Text style={styles.favoriteButtonText}>{isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}</Text>
+                <Text
+                    style={styles.favoriteButtonText}>{isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}</Text>
             </TouchableOpacity>
         </View>
     );

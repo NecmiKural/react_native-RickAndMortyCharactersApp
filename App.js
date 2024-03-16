@@ -5,12 +5,17 @@ import Home from "./screens/Home/Home";
 import Episodes from "./screens/Episode/Episode";
 import CharacterDetails from './screens/Characters/CharacterDetails';
 import Favorites from "./screens/Favorites/Favorites";
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {store, persistor} from './redux/store/store';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
 
     return (
+<Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Home">
                 <Stack.Screen name="Home" component={Home} options={{title: 'R&M Episodes'}}/>
@@ -19,5 +24,7 @@ export default function App() {
                 <Stack.Screen name="Favorites" component={Favorites} options={{title: 'Favorite Characters'}}/>
             </Stack.Navigator>
         </NavigationContainer>
+    </PersistGate>
+</Provider>
     );
 }
