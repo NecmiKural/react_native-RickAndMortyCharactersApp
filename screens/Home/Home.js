@@ -5,7 +5,7 @@ import {
     Text,
     FlatList,
     ActivityIndicator,
-    StyleSheet,
+    StyleSheet, TouchableOpacity,
 } from 'react-native';
 import {ListItem} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
@@ -16,7 +16,6 @@ function Home({navigation}) {
     const [data, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
-    const [expanded, setExpanded] = useState(new Array(0).fill(false));
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -27,7 +26,6 @@ function Home({navigation}) {
             const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
             const result = await response.json();
             setData(prevData => [...prevData, ...result.results]);
-            setExpanded(new Array(result.info.count).fill(false));
             setIsLoaded(true);
         } catch (error) {
             setError(error);
@@ -69,22 +67,19 @@ function Home({navigation}) {
     }, [currentPage]);
 
     const renderItem = ({item, index}) => (
-        <ListItem.Accordion
-            key={index}
-            content={
+        <ListItem
+            key={index}>
+            <TouchableOpacity onPress={() => {
+                navigation.navigate('Episodes', {episodeId: item.id});
+            }}>
                 <ListItem.Content>
                     <ListItem.Title>
                         Episode Name: {item.name}
                     </ListItem.Title>
                     <ListItem.Subtitle>Episode: {item.episode}</ListItem.Subtitle>
                 </ListItem.Content>
-            }
-            isExpanded={expanded[index]}
-            onPress={() => {
-                navigation.navigate('Episodes', {episodeId: item.id});
-            }}
-        >
-        </ListItem.Accordion>
+            </TouchableOpacity>
+        </ListItem>
     );
 
     const paginationProps = {
