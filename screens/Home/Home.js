@@ -1,16 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
     FlatList,
-    StyleSheet, TouchableOpacity,
+    StyleSheet,
+    TouchableOpacity,
 } from 'react-native';
-import {ListItem} from '@rneui/themed';
+import { ListItem } from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
 import SearchBar from '../../components/SearchBar';
 import Pagination from '../../components/Pagination';
 
-function Home({navigation}) {
+function Home({ navigation }) {
     const [data, setData] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
@@ -35,8 +36,8 @@ function Home({navigation}) {
     };
 
     const loadMoreData = () => {
-        if (data.length > 0) {
-            setCurrentPage(prevPage => prevPage + 1);
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
         }
     };
 
@@ -49,7 +50,6 @@ function Home({navigation}) {
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
                 const result = await response.json();
                 setData(result.results);
-                setExpanded(new Array(result.info.count).fill(false));
                 setIsLoaded(true);
             } catch (error) {
                 setError(error);
@@ -81,18 +81,14 @@ function Home({navigation}) {
         </ListItem>
     );
 
-    const totalItems = 51;
-    const totalPages = 5;
-
+    const totalPages = Math.ceil((data.length - (currentPage === 1 ? 11 : 0)) / currentPage === 1 ? 11 : 10) + 1;
 
     const paginationProps = {
-        totalItems,
+        totalItems: data.length,
         itemsPerPage: currentPage === 1 ? 11 : 10,
         currentPage,
         totalPages,
-        onPageChange: (page) => {
-            setCurrentPage(page);
-        },
+        onPageChange: loadMoreData,
     };
 
     if (error) {
@@ -110,7 +106,7 @@ function Home({navigation}) {
                     keyExtractor={(item, index) => index.toString()}
                 />
                 <Pagination {...paginationProps}
-                            disabled={currentPage === totalPages}/>
+                            onPageChange={loadMoreData}/>
             </View>
         );
     }
