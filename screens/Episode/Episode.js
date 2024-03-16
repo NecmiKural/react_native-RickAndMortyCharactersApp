@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View} from 'react-native';
-import {Avatar, ListItem, Text} from '@rneui/themed';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, StyleSheet, View } from 'react-native';
+import { Avatar, ListItem, Text } from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
-function Episodes({route}) {
+function Episodes({ route }) {
     const navigation = useNavigation();
-    const {episodeId} = route.params;
+    const { episodeId } = route.params;
     const [episode, setEpisode] = useState(null);
     const [characters, setCharacters] = useState([]);
     const handleCharacterPress = (character) => {
@@ -18,7 +18,7 @@ function Episodes({route}) {
             const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
             const data = await response.json();
             setEpisode(data);
-            navigation.setOptions({title: data.name});
+            navigation.setOptions({ title: data.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
         };
 
         fetchEpisode();
@@ -44,7 +44,6 @@ function Episodes({route}) {
 
     return (
         <View>
-            <FavoritesButton navigation={navigation} />
             <FlatList
                 data={characters}
                 renderItem={({ item }) => (
@@ -78,7 +77,8 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     image: {
-        width: 50,height: 50,
+        width: 50,
+        height: 50,
         marginRight: 10,
     },
     name: {
