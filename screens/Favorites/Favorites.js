@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native';
+import {View, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {removeFavorite} from '../../redux/actions/actions';
 import {selectFavorites} from '../../redux/selectors/selector';
-import {Icon} from "@rneui/base";
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {Icon, Avatar, ListItem, Text} from "@rneui/themed";
 
 function Favorites() {
+    const navigation = useNavigation();
     const favorites = useSelector(selectFavorites);
     const dispatch = useDispatch();
 
@@ -23,34 +25,53 @@ function Favorites() {
                 },
                 {
                     text: 'OK',
-                    onPress: () => dispatch(removeFavorite(character)),
+                    onPress: () => {
+                        dispatch(removeFavorite(character));
+                    },
                 },
             ],
             {cancelable: false}
         );
     };
 
+    const handleFavoritePress = (character) => {
+        navigation.navigate('CharacterDetails', {character: character});
+    };
+
     return (
         <View>
-            <Text style={styles.title}>Favorites</Text>
             {
                 favorites.length > 0 ?
                     <FlatList
                         data={favorites}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({item}) => (
-                            <View style={styles.favoriteItem}>
-                                <Text style={styles.favoriteName}>{item.name}</Text>
-                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)}>
-                                    <Icon
-                                        name='trash'
-                                        type='font-awesome'
-                                        color='#f50057'
-                                        size={24}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        )}
+                            <ListItem
+                                onPress={() => handleFavoritePress(item)}
+                            >
+                                <Avatar
+                                    rounded
+                                    source={{
+                                        uri: item.image,
+                                    }}
+                                />
+                                <ListItem.Content>
+                                    <ListItem.Title>{item.name}</ListItem.Title>
+                                </ListItem.Content>
+                                <View style={{flexDirection: 'row'}}>
+                                    <TouchableOpacity onPress={() => handleRemoveFavorite(item)}
+                                                      style={{marginLeft: 'auto'}}>
+                                        <Icon
+                                            name='trash'
+                                            type='font-awesome'
+                                            color='#f50057'
+                                            size={24}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </ListItem>
+                        )
+                        }
                     />
                     : <Text style={styles.noFavorites}>No favorites</Text>
             }
@@ -59,12 +80,6 @@ function Favorites() {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        marginLeft: 16,
-    },
     noFavorites: {
         fontSize: 16,
         fontWeight: 'bold',
