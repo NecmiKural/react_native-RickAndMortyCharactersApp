@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, StyleSheet} from 'react-native';
-import {Text, Card} from '@rneui/themed';
+import {View, FlatList, StyleSheet, Image} from 'react-native';
+import {Text, Card, ListItem} from '@rneui/themed';
 
 function Episodes({route}) {
     const {episodeId} = route.params;
     const [episode, setEpisode] = useState(null);
+    const [characters, setCharacters] = useState([]);
 
     useEffect(() => {
         const fetchEpisode = async () => {
@@ -16,36 +17,50 @@ function Episodes({route}) {
         fetchEpisode();
     }, [episodeId]);
 
+    useEffect(() => {
+        const fetchCharacters = async () => {
+            const fetchedCharacters = await Promise.all(episode.characters.map(async (url) => {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            }));
+            setCharacters(fetchedCharacters);
+        };
+
+        if (episode) {
+            fetchCharacters();
+        }
+    }, [episode]);
+
     if (!episode) {
         return <Text>Loading...</Text>;
     }
 
     return (
         <View>
-            <Text>Name: {episode.name}</Text>
-            <Text>Episode: {episode.episode}</Text>
-            {/*<Text>Characters:</Text>*/}
+            <ListItem>
+                <ListItem.Content>
+                    <ListItem.Title>Name: {episode.name}</ListItem.Title>
+                    <ListItem.Subtitle>Episode: {episode.episode}</ListItem.Subtitle>
+                </ListItem.Content>
+            </ListItem>
             <FlatList
-                data={episode.characters}
+                data={characters}
                 renderItem={({item}) =>
                     <Card>
                         <Card.Title>Characters</Card.Title>
                         <Card.Divider/>
-                        {item.map((u, i) => {
-                            return (
-                                <View key={i} style={styles.user}>
-                                    <Image
-                                        style={styles.image}
-                                        resizeMode="cover"
-                                        source={{uri: u.avatar}}
-                                    />
-                                    <Text style={styles.name}>{u.name}</Text>
-                                </View>
-                            );
-                        })}
+                        <View style={styles.user}>
+                            <Image
+                                style={styles.image}
+                                resizeMode="cover"
+                                source={{uri: item.image}}
+                            />
+                            <Text style={styles.name}>{item.name}</Text>
+                        </View>
                     </Card>
                 }
-                keyExtractor={item => item}
+                keyExtractor={item => item.id.toString()}
             />
         </View>
     );
@@ -63,8 +78,8 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     image: {
-        width: 30,
-        height: 30,
+        width: 50,
+        height: 50,
         marginRight: 10,
     },
     name: {
@@ -72,4 +87,5 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
 });
+
 export default Episodes;
