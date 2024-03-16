@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, StyleSheet, Image} from 'react-native';
-import {Text, Card, ListItem} from '@rneui/themed';
+import {FlatList, Image, StyleSheet, View} from 'react-native';
+import {Card, ListItem, Text} from '@rneui/themed';
 
 function Episodes({route}) {
     const {episodeId} = route.params;
@@ -21,8 +21,7 @@ function Episodes({route}) {
         const fetchCharacters = async () => {
             const fetchedCharacters = await Promise.all(episode.characters.map(async (url) => {
                 const response = await fetch(url);
-                const data = await response.json();
-                return data;
+                return await response.json();
             }));
             setCharacters(fetchedCharacters);
         };
@@ -42,6 +41,7 @@ function Episodes({route}) {
                 <ListItem.Content>
                     <ListItem.Title>Name: {episode.name}</ListItem.Title>
                     <ListItem.Subtitle>Episode: {episode.episode}</ListItem.Subtitle>
+                    <ListItem.Subtitle >Characters</ListItem.Subtitle>
                 </ListItem.Content>
             </ListItem>
             <FlatList
