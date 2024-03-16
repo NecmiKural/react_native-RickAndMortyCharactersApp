@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Button, View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {ListItem, Avatar} from '@rneui/themed';
 import FavoritesButton from "../../components/FavoritesButton";
+import SearchBar from '../../components/SearchBar';
 
 function Home({navigation}) {
     const [data, setData] = useState([]);
@@ -10,6 +11,7 @@ function Home({navigation}) {
     const [expanded, setExpanded] = useState(new Array(0).fill(false));
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const getApiData = async (page) => {
         try {
@@ -30,6 +32,22 @@ function Home({navigation}) {
     const loadMoreData = () => {
         if (currentPage < 3) {
             setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
+
+    const searchCharacters = async (searchTerm) => {
+        try {
+            setIsLoadingMore(true);
+            const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
+            const result = await response.json();
+            setData(result.results);
+            setExpanded(new Array(result.info.count).fill(false));
+            setIsLoaded(true);
+        } catch (error) {
+            setError(error);
+            setIsLoaded(true);
+        } finally {
+            setIsLoadingMore(false);
         }
     };
 
@@ -80,6 +98,8 @@ function Home({navigation}) {
     } else {
         return (
             <View style={{flex: 1}}>
+                <SearchBar term={searchTerm} onTermChange={setSearchTerm}
+                           onTermSubmit={() => searchCharacters(searchTerm)}/>
                 <FlatList
                     data={data}
                     renderItem={renderItem}

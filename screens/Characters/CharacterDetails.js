@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import FavoritesButton from "../../components/FavoritesButton";
-import {useNavigation, useRoute} from "@react-navigation/native";
 
 function CharacterDetails() {
     const navigation = useNavigation();
     const route = useRoute();
     const { character } = route.params;
+    const selectFavorites = (state) => state.favorites.favorites;
 
     const [characterData, setCharacterData] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
-    const favorites = useSelector(selectFavorites);
+    const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
         setCharacterData(character);
         navigation.setOptions({ title: character.name, headerRight: () => <FavoritesButton navigation={navigation} /> });
     }, [character, navigation]);
+
+    useEffect(() => {
+        const storedFavorites = // fetch favorites from storage or state
+            setFavorites(storedFavorites || []);
+    }, []);
 
     useEffect(() => {
         setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
@@ -107,7 +112,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
-const selectFavorites = (state) => state.favorites.favorites;
 
 export default CharacterDetails;
