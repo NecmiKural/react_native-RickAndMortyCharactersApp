@@ -58,6 +58,13 @@ function Episodes({route}) {
         <View>
             <SearchBar term={searchTerm} onTermChange={setSearchTerm}
                        onTermSubmit={() => searchCharacters(searchTerm)}/>
+            <ListItem>
+                <ListItem.Content>
+                    <ListItem.Title>Name: {episode.name}</ListItem.Title>
+                    <ListItem.Subtitle>Episode: {episode.episode}</ListItem.Subtitle>
+                    <ListItem.Subtitle>Characters</ListItem.Subtitle>
+                </ListItem.Content>
+            </ListItem>
             <FlatList
                 data={characters}
                 renderItem={({item}) => (
