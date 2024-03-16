@@ -1,11 +1,19 @@
-import React, {useState, useEffect} from 'react';
-import {Button, View, Text, FlatList, ActivityIndicator} from 'react-native';
-import {ListItem, Avatar} from '@rneui/themed';
-import FavoritesButton from "../../components/FavoritesButton";
+import React, { useState, useEffect } from 'react';
+import {
+    Button,
+    View,
+    Text,
+    FlatList,
+    ActivityIndicator,
+} from 'react-native';
+import { ListItem, Avatar } from '@rneui/themed';
+import FavoritesButton from '../../components/FavoritesButton';
 import SearchBar from '../../components/SearchBar';
+import CharacterListItem from '../../components/CharacterListItem';
 
-function Home({navigation}) {
+function Home({ navigation }) {
     const [data, setData] = useState([]);
+    const [characters, setCharacters] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [expanded, setExpanded] = useState(new Array(0).fill(false));
@@ -21,12 +29,31 @@ function Home({navigation}) {
             setData(prevData => [...prevData, ...result.results]);
             setExpanded(new Array(result.info.count).fill(false));
             setIsLoaded(true);
+            await fetchCharacters(result.results);
         } catch (error) {
             setError(error);
             setIsLoaded(true);
         } finally {
             setIsLoadingMore(false);
         }
+    };
+
+    const fetchCharacters = async (episodes) => {
+        const characterPromises = episodes.map(async (episode) => {
+            const characterUrls = episode.characters;
+            const characterData = [];
+
+            for (const url of characterUrls) {
+                const characterResponse = await fetch(url);
+                const characterResult = await characterResponse.json();
+                characterData.push(characterResult);
+            }
+
+            return characterData;
+        });
+
+        const characterData = await Promise.all(characterPromises);
+        setCharacters(characters.concat(...characterData));
     };
 
     const loadMoreData = () => {
@@ -43,6 +70,7 @@ function Home({navigation}) {
             setData(result.results);
             setExpanded(new Array(result.info.count).fill(false));
             setIsLoaded(true);
+            await fetchCharacters(result.results);
         } catch (error) {
             setError(error);
             setIsLoaded(true);
@@ -53,43 +81,41 @@ function Home({navigation}) {
 
     useEffect(() => {
         getApiData(currentPage);
-        navigation.setOptions({headerRight: () => <FavoritesButton navigation={navigation}/>});
+        navigation.setOptions({ headerRight: () => <FavoritesButton navigation={navigation} /> });
     }, [currentPage]);
 
-    const renderItem = ({item, index}) => (
-        <ListItem.Accordion
-            key={index}
-            content={
-                <ListItem.Content>
-                    <ListItem.Title>
-                        Episode Name: {item.name}
-                    </ListItem.Title>
-                    <ListItem.Subtitle>Episode: {item.episode}</ListItem.Subtitle>
-                </ListItem.Content>
-            }
-            isExpanded={expanded[index]}
-            onPress={() => {
-                setExpanded(expanded.map((value, i) => i === index ? !value : value));
-                navigation.navigate('Episodes', {episodeId: item.id}); // pass episode id to navigation function
-            }}
-        >
-            {
-                item.characters.map((character, i) => (
-                    <ListItem key={i}>
-                        <Avatar
-                            rounded
-                            source={{
-                                uri: character,
-                            }}
-                        />
-                        <ListItem.Content>
-                            <ListItem.Title>John Doe</ListItem.Title>
-                            <ListItem.Subtitle>Principle Engineer</ListItem.Subtitle>
-                        </ListItem.Content>
-                    </ListItem>))
-            }
-        </ListItem.Accordion>
-    );
+    const renderItem = ({ item, index }) => {
+        const charactersForEpisode = item.characters.map(characterUrl => characters.find(c => c.id === parseInt(characterUrl.split('/').at(-2))));
+
+        return (
+            <ListItem.Accordion
+                key={index}
+                content={
+                    <ListItem.Content>
+                        <ListItem.Title>
+                            Episode Name: {item.name}
+                        </ListItem.Title>
+                        <ListItem.Subtitle>Episode: {item.episode}</ListItem.Subtitle>
+                    </ListItem.Content>
+                }
+                isExpanded={expanded[index]}
+                onPress={() => {
+                    setExpanded(expanded.map((value, i) => i === index ? !value : value));
+                    // navigation.navigate('Episodes', {episodeId: item.id});
+                }}
+            >
+                {
+                    charactersForEpisode.map((character, i) => (
+                        character ? (
+                            <CharacterListItem character={character} key={i} />
+                        ) : (
+                            <ActivityIndicator size="small" color="#0000ff" key={i} />
+                        )
+                    ))
+                }
+            </ListItem.Accordion>
+        );
+    };
 
     if (error) {
         return <Text>Error: {error.message}</Text>;
@@ -97,9 +123,9 @@ function Home({navigation}) {
         return <Text>Loading...</Text>;
     } else {
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <SearchBar term={searchTerm} onTermChange={setSearchTerm}
-                           onTermSubmit={() => searchEpisodes(searchTerm)}/>
+                           onTermSubmit={() => searchEpisodes(searchTerm)} />
                 <FlatList
                     data={data}
                     renderItem={renderItem}
@@ -108,7 +134,7 @@ function Home({navigation}) {
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         isLoadingMore ? (
-                            <ActivityIndicator size="small" color="#0000ff"/>
+                            <ActivityIndicator size="small" color="#0000ff" />
                         ) : null
                     }
                 />
