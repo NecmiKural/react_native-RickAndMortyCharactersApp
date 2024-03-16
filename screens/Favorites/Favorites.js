@@ -53,8 +53,9 @@ function Favorites() {
                                         source={{
                                             uri: item.image,
                                         }}
+
                                     />
-                                    <ListItem.Content>
+                                    <ListItem.Content style={{marginLeft: 8}}>
                                         <ListItem.Title>{item.name}</ListItem.Title>
                                     </ListItem.Content>
                                 </TouchableOpacity>
