@@ -45,7 +45,7 @@ function Favorites() {
                         data={favorites}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({item}) => (
-                            <ListItem>
+                            <ListItem key={`${item.id}-listItem`}>
                                 <TouchableOpacity onPress={() => handleFavoritePress(item)}
                                                   style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <Avatar

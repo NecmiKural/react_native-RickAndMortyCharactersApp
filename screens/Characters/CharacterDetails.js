@@ -10,13 +10,9 @@ function CharacterDetails() {
     const dispatch = useDispatch();
     const favorites = useSelector(selectFavorites) || [];
     const character = useRoute().params.character;
-    const [favoritesState, setFavoritesState] = useState(favorites);
-    const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
-
     const navigation = useNavigation();
-
     const [characterData, setCharacterData] = useState(null);
-
+    const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
 
     useEffect(() => {
         setCharacterData(character);
@@ -24,26 +20,15 @@ function CharacterDetails() {
     }, [character, navigation]);
 
     useEffect(() => {
-        const storedFavorites = // fetch favorites from storage or state
-
-            setFavoritesState(storedFavorites || []);
-    }, []);
-
-    useEffect(() => {
-        setIsFavorite(favoritesState.some((favorite) => favorite.id === character.id));
-    }, [favoritesState, character]);
+        setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
+    }, [favorites, character]);
 
     const handleFavoritePress = () => {
-
         if (isFavorite) {
             dispatch(removeFavorite(character));
-            setFavoritesState(favoritesState.filter((favorite) => favorite.id !== character.id));
         } else {
             if (favorites.length >= 10) {
-                // Show error with Local Notification
-                // PushNotification.localNotification({
-                //     message: 'Favori karakter ekleme sayısını aştınız. Başka bir karakteri favorilerden çıkarmalısınız.',
-                // });
+                // TODO: değişebilir
                 Alert.alert(
                     'Maximum number of favorites reached',
                     'You can only have up to 10 favorites. Remove a character from favorites to add a new one.',
@@ -57,8 +42,8 @@ function CharacterDetails() {
                 return;
             }
             dispatch(addFavorite(character));
-            setFavoritesState([...favoritesState, character]);
         }
+        setIsFavorite(!isFavorite);
     };
 
     if (!characterData) {
