@@ -4,6 +4,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import FavoritesButton from "../../components/FavoritesButton";
 import {useDispatch, useSelector} from 'react-redux';
 import {addFavorite, removeFavorite} from '../../redux/actions/actions';
+import PushNotification from 'react-native-push-notification';
 
 const selectFavorites = (state) => state.favorites.favorites;
 
@@ -17,6 +18,24 @@ function CharacterDetails() {
     const navigation = useNavigation();
 
     const [characterData, setCharacterData] = useState(null);
+
+    useEffect(() => {
+        PushNotification.configure({
+            onRegister: function (token) {
+                console.log('TOKEN:', token);
+            },
+            onNotification: function (notification) {
+                console.log('NOTIFICATION:', notification);
+            },
+            permissions: {
+                alert: true,
+                badge: true,
+                sound: true,
+            },
+            popInitialNotification: true,
+            requestPermissions: true,
+        });
+    }, []);
 
     useEffect(() => {
         setCharacterData(character);
@@ -40,6 +59,9 @@ function CharacterDetails() {
         } else {
             if (favoritesState.length >= 10) {
                 // Show error with Local Notification
+                PushNotification.localNotification({
+                    message: 'Favori karakter ekleme sayısını aştınız. Başka bir karakteri favorilerden çıkarmalısınız.',
+                });
                 return;
             }
             dispatch(addFavorite(character));
@@ -80,7 +102,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height:300,
+        height: 300,
         marginBottom: 16,
     },
     name: {

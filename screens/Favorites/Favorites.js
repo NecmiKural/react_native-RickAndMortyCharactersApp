@@ -47,7 +47,8 @@ function Favorites() {
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({item}) => (
                             <ListItem>
-                                <TouchableOpacity onPress={() => handleFavoritePress(item)} style={{flexDirection: 'row', alignItems: 'center'}}>
+                                <TouchableOpacity onPress={() => handleFavoritePress(item)}
+                                                  style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <Avatar
                                         rounded
                                         source={{
@@ -59,7 +60,8 @@ function Favorites() {
                                         <ListItem.Title>{item.name}</ListItem.Title>
                                     </ListItem.Content>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)} style={{marginLeft: 'auto'}}>
+                                <TouchableOpacity onPress={() => handleRemoveFavorite(item)}
+                                                  style={{marginLeft: 'auto'}}>
                                     <Icon
                                         name='trash'
                                         type='font-awesome'
