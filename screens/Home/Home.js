@@ -46,6 +46,7 @@ function Home({navigation}) {
         }
     };
 
+    // her sezon için yapmak istersen 5 yap. ancak bu sefer apiye kullanıcı ilerledikçe istek atmalı ve gelen veriler ayrı bir listede tutularak parse edilmeli sayfa durumuna göre.
     const totalPages = 3;
     const paginationProps = {
         totalItems: data.length + 1,
