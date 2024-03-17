@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {
+    Button,
     View,
     Text,
     FlatList,
-    StyleSheet,
-    TouchableOpacity,
+    ActivityIndicator,
+    StyleSheet, TouchableOpacity,
 } from 'react-native';
 import {ListItem} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
@@ -16,22 +17,27 @@ function Home({navigation}) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [episodes, setEpisodes] = useState([]);
 
-    const getApiData = async (dataUrlId) => {
-        if (dataUrlId <= 3) {
-            try {
-                const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${dataUrlId}`);
-                const result = await response.json();
-                setEpisodes(prevItems => [...prevItems, ...result.results]);
-                console.log(episodes.length);
-                setData(prevData => [...prevData, ...result.results.slice(0, dataUrlId === 1 ? 11 : 10)]);
-                setIsLoaded(true);
-            } catch (error) {
-                setError(error);
-                setIsLoaded(true);
-            }
+    const getApiData = async (page) => {
+        try {
+            setIsLoadingMore(true);
+            const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
+            const result = await response.json();
+            setData(prevData => [...prevData, ...result.results]);
+            setIsLoaded(true);
+        } catch (error) {
+            setError(error);
+            setIsLoaded(true);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
+
+    const loadMoreData = () => {
+        if (currentPage < 3) {
+            setCurrentPage(prevPage => prevPage + 1);
         }
     };
 
@@ -40,27 +46,18 @@ function Home({navigation}) {
             getApiData(currentPage);
         } else {
             try {
+                setIsLoadingMore(true);
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
                 const result = await response.json();
                 setData(result.results);
+                setExpanded(new Array(result.info.count).fill(false));
                 setIsLoaded(true);
             } catch (error) {
                 setError(error);
                 setIsLoaded(true);
+            } finally {
+                setIsLoadingMore(false);
             }
-        }
-    };
-
-    const loadMoreData = () => {
-        if (currentPage < 3) {
-            setCurrentPage(prevPage => prevPage + 1);
-            getApiData(currentPage);
-        }
-    };
-    const loadPreviousData = () => {
-        if (currentPage > 1) {
-            setCurrentPage(prevPage => prevPage - 1);
-            getApiData(currentPage);
         }
     };
 
@@ -85,17 +82,12 @@ function Home({navigation}) {
         </ListItem>
     );
 
-    const totalPages = 5;
-
     const paginationProps = {
-        totalItems: data.length + 1,
-        itemsPerPage: currentPage === 1 ? 11 : 10,
-        currentPage,
-        totalPages,
-        // onPageChange: (page) => {
-        //     setCurrentPage(page);
-        // }
-        onPageChange: loadMoreData
+        totalItems: 41, // Replace this with the actual total number of items
+        itemsPerPage: 20,
+        onPageChange: (page) => {
+            setCurrentPage(page);
+        },
     };
 
     if (error) {
@@ -111,17 +103,13 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                />
-                <Pagination
-                    {...paginationProps}
-                    onPageChange={(page) => {
-                        if (page < currentPage) {
-                            loadPreviousData();
-                        } else {
-                            setCurrentPage(page);
-                            getApiData(page);
-                        }
-                    }}
+                    onEndReached={loadMoreData}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={
+                        isLoadingMore ? (
+                            <ActivityIndicator size="small" color="#0000ff"/>
+                        ) : null
+                    }
                 />
             </View>
         );
