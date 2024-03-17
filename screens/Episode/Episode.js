@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Image, StyleSheet, View} from 'react-native';
+import {FlatList, View} from 'react-native';
 import {Avatar, ListItem, Text} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
 import {useNavigation} from "@react-navigation/native";
@@ -89,27 +89,5 @@ function Episodes({route}) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    fonts: {
-        marginBottom: 8,
-    },
-    user: {
-        flexDirection: 'row',
-        marginBottom: 6,
-    },
-    image: {
-        width: 50,
-        height: 50,
-        marginRight: 10,
-    },
-    name: {
-        fontSize: 16,
-        marginTop: 5,
-    },
-});
 
 export default Episodes;

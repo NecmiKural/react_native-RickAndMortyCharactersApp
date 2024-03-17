@@ -1,5 +1,4 @@
 import { createReducer } from '@reduxjs/toolkit';
-import {REHYDRATE} from "redux-persist/es/constants";
 
 const initialState = {
     favorites: [],

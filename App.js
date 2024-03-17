@@ -12,7 +12,6 @@ import {store, persistor} from './redux/store/store';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>

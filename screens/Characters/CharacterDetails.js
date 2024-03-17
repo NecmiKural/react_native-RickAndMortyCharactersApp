@@ -28,7 +28,6 @@ function CharacterDetails() {
             dispatch(removeFavorite(character));
         } else {
             if (favorites.length >= 10) {
-                // TODO: değişebilir
                 Alert.alert(
                     'Maximum number of favorites reached',
                     'You can only have up to 10 favorites. Remove a character from favorites to add a new one.',

@@ -1,4 +1,3 @@
-import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity, Alert} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {removeFavorite} from '../../redux/actions/actions';
