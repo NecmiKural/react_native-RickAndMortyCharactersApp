@@ -48,7 +48,6 @@ function Home({navigation}) {
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
                 const result = await response.json();
                 setData(result.results);
-                setExpanded(new Array(result.info.count).fill(false));
                 setIsLoaded(true);
             } catch (error) {
                 setError(error);
