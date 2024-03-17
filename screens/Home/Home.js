@@ -19,15 +19,14 @@ function Home({navigation}) {
     const [searchTerm, setSearchTerm] = useState('');
     const [episodes, setEpisodes] = useState([]);
 
-    const getApiData = async (page) => {
-        if (page <= 3) {
+    const getApiData = async (dataUrlId) => {
+        if (dataUrlId <= 3) {
             try {
-                const itemsPerPage = page === 1 ? 11 : 10;
-                const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
+                const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${dataUrlId}`);
                 const result = await response.json();
                 setEpisodes(prevItems => [...prevItems, ...result.results]);
                 console.log(episodes.length);
-                setData(prevData => [...prevData, ...result.results.slice(0, itemsPerPage)]);
+                setData(prevData => [...prevData, ...result.results.slice(0, dataUrlId === 1 ? 11 : 10)]);
                 setIsLoaded(true);
             } catch (error) {
                 setError(error);
@@ -55,13 +54,18 @@ function Home({navigation}) {
     const loadMoreData = () => {
         if (currentPage < 3) {
             setCurrentPage(prevPage => prevPage + 1);
+            getApiData(currentPage);
+        }
+    };
+    const loadPreviousData = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+            getApiData(currentPage);
         }
     };
 
     useEffect(() => {
-
         getApiData(currentPage);
-
         navigation.setOptions({headerRight: () => <FavoritesButton navigation={navigation}/>});
     }, [currentPage]);
 
@@ -108,7 +112,17 @@ function Home({navigation}) {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                 />
-                <Pagination {...paginationProps}/>
+                <Pagination
+                    {...paginationProps}
+                    onPageChange={(page) => {
+                        if (page < currentPage) {
+                            loadPreviousData();
+                        } else {
+                            setCurrentPage(page);
+                            getApiData(page);
+                        }
+                    }}
+                />
             </View>
         );
     }
