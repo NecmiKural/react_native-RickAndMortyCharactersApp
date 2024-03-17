@@ -41,7 +41,7 @@ function Home({navigation}) {
 
     const searchEpisodes = async (searchTerm) => {
         if (searchTerm === "") {
-            getApiData(currentPage);
+            await getApiData(currentPage);
         } else {
             try {
                 setIsLoadingMore(true);
@@ -78,14 +78,6 @@ function Home({navigation}) {
             </TouchableOpacity>
         </ListItem>
     );
-
-    const paginationProps = {
-        totalItems: 41, // Replace this with the actual total number of items
-        itemsPerPage: 20,
-        onPageChange: (page) => {
-            setCurrentPage(page);
-        },
-    };
 
     if (error) {
         return <Text>Error: {error.message}</Text>;
