@@ -1,8 +1,8 @@
-// Notification.js
+// Must use physical device for Push Notifications
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Button } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import * as Constants from 'expo-constants';
+import Constants from 'expo-constants';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -23,7 +23,7 @@ const Notification = () => {
             setExpoPushToken(token)
         );
 
-        if (Constants.isDevice) {
+        if (Constants.device) {
             notificationListener.current = Notifications.addNotificationReceivedListener(
                 (notification) => {
                     setNotification(notification);
@@ -47,7 +47,7 @@ const Notification = () => {
 
     const registerForPushNotificationsAsync = async () => {
         let token;
-        if (Constants.isDevice) {
+        if (Constants.device) {
             const { status: existingStatus } =
                 await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
@@ -55,7 +55,7 @@ const Notification = () => {
                 const { status } = await Notifications.requestPermissionsAsync();
                 finalStatus = status;
             }
-            if (finalStatus !=='granted') {
+            if (finalStatus !== 'granted') {
                 console.log('Failed to get push token for push notification!');
                 return;
             }
