@@ -11,6 +11,7 @@ import {ListItem} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
 import SearchBar from '../../components/SearchBar';
 import Pagination from '../../components/Pagination';
+import Notification from "../../components/Notification";
 
 function Home({navigation}) {
     const [data, setData] = useState([]);
@@ -97,6 +98,7 @@ function Home({navigation}) {
     } else {
         return (
             <View style={styles.container}>
+                {/*<Notification />*/}
                 <SearchBar holder={"Search Episodes"} term={searchTerm} onTermChange={setSearchTerm}
                            onTermSubmit={() => searchEpisodes(searchTerm)}/>
                 <FlatList
