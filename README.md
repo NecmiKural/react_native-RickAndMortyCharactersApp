@@ -1,6 +1,6 @@
 In this React Native application user can see episodes and characters of Rick and Morty and able to add characters to favorite.
 --
-On home page user can see episodes of Rick and Morty. User able to search an episode from search bar. If user scrolls down the application brings new data with lazy load pagination.
+On home page user can see episodes of Rick and Morty. User able to search an episode from search bar. User can use previous and next buttons to see other episodes. This pagination comes as a component.
 
 After the user selects an episode, the application goes to that episode's page. Users can see characters in this episode. Users can search for specific characters from the search bar.
 

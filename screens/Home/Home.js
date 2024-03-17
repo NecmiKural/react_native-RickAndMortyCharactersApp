@@ -9,6 +9,7 @@ import {
 import {ListItem} from '@rneui/themed';
 import FavoritesButton from '../../components/FavoritesButton';
 import SearchBar from '../../components/SearchBar';
+import Pagination from '../../components/Pagination';
 
 function Home({navigation}) {
     const [data, setData] = useState([]);
@@ -23,7 +24,7 @@ function Home({navigation}) {
             setIsLoadingMore(true);
             const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
             const result = await response.json();
-            setData(prevData => [...prevData, ...result.results]);
+            setData(result.results);
             setIsLoaded(true);
         } catch (error) {
             setError(error);
@@ -32,11 +33,25 @@ function Home({navigation}) {
             setIsLoadingMore(false);
         }
     };
-
     const loadMoreData = () => {
         if (currentPage < 3) {
             setCurrentPage(prevPage => prevPage + 1);
+            getApiData(currentPage);
         }
+    };
+    const loadPreviousData = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+            getApiData(currentPage);
+        }
+    };
+
+    const totalPages = 3;
+    const paginationProps = {
+        totalItems: data.length + 1,
+        itemsPerPage: currentPage,
+        currentPage,
+        totalPages
     };
 
     const searchEpisodes = async (searchTerm) => {
@@ -92,13 +107,18 @@ function Home({navigation}) {
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
-                    onEndReached={loadMoreData}
-                    onEndReachedThreshold={0.5}
-                    ListFooterComponent={
-                        isLoadingMore ? (
-                            <ActivityIndicator size="small" color="#0000ff"/>
-                        ) : null
-                    }
+
+                />
+                <Pagination
+                    {...paginationProps}
+                    onPageChange={(page) => {
+                        if (page < currentPage) {
+                            loadPreviousData();
+                        } else {
+                            setCurrentPage(page);
+                            getApiData(page);
+                        }
+                    }}
                 />
             </View>
         );
