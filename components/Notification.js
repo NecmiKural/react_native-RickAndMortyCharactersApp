@@ -1,45 +1,84 @@
-import React from 'react';
-import PushNotification from 'react-native-push-notification';
+// Notification.js
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Button } from 'react-native';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
 
 const Notification = () => {
-    PushNotification.configure({
-        onRegister: function (token) {
-            console.log('TOKEN:', token);
-        },
-        onNotification: function (notification) {
-            console.log('NOTIFICATION:', notification);
-        },
-        onAction: function (notification) {
-            console.log('ACTION:', notification.action);
-            console.log('NOTIFICATION:', notification);
-        },
-        onRegistrationError: function (err) {
-            console.error('REGISTRATION ERROR:', err);
-        },
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true,
-        },
-        popInitialNotification: true,
-        requestPermissions: true,
-    });
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then((token) =>
+            setExpoPushToken(token)
+        );
+
+        notificationListener.current = Notifications.addNotificationReceivedListener(
+            (notification) => {
+                setNotification(notification);
+            }
+        );
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(
+            (response) => {
+                console.log(response);
+            }
+        );
+
+        return () => {
+            Notifications.removeNotificationSubscription(
+                notificationListener.current
+            );
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
+
+    const registerForPushNotificationsAsync = async () => {
+        let token;
+        if (Constants.isDevice) {
+            const { status: existingStatus } =
+                await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            token = (await Notifications.getExpoPushTokenAsync()).data;
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        return token;
+    };
 
     const scheduleNotification = () => {
-        PushNotification.localNotificationSchedule({
-            title: 'Local Notification',
-            message: 'This is a local notification!',
-            date: new Date(Date.now() + 60 * 1000), // 1 minute from now
-            soundName: 'default',
-            repeatType: 'time',
-            repeatTime: 60, // 1 minute
+        Notifications.scheduleNotificationAsync({
+            content: {
+                title: 'Local Notification',
+                body: 'This is a local notification!',
+                data: { message: 'Hello, world!' },
+            },
+            trigger: { seconds: 60 }, // 1 minute from now
         });
     };
 
     return (
-        <>
-            <button title="Schedule Notification" onPress={scheduleNotification} />
-        </>
+        <View style={{ flex: 1 }}>
+            <Button title="Schedule Notification" onPress={scheduleNotification} />
+        </View>
     );
 };
 
