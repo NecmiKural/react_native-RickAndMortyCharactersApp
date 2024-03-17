@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Button } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import * as Constants from 'expo-constants';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -22,24 +23,26 @@ const Notification = () => {
             setExpoPushToken(token)
         );
 
-        notificationListener.current = Notifications.addNotificationReceivedListener(
-            (notification) => {
-                setNotification(notification);
-            }
-        );
-
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(
-            (response) => {
-                console.log(response);
-            }
-        );
-
-        return () => {
-            Notifications.removeNotificationSubscription(
-                notificationListener.current
+        if (Constants.isDevice) {
+            notificationListener.current = Notifications.addNotificationReceivedListener(
+                (notification) => {
+                    setNotification(notification);
+                }
             );
-            Notifications.removeNotificationSubscription(responseListener.current);
-        };
+
+            responseListener.current = Notifications.addNotificationResponseReceivedListener(
+                (response) => {
+                    console.log(response);
+                }
+            );
+
+            return () => {
+                Notifications.removeNotificationSubscription(
+                    notificationListener.current
+                );
+                Notifications.removeNotificationSubscription(responseListener.current);
+            };
+        }
     }, []);
 
     const registerForPushNotificationsAsync = async () => {
@@ -52,13 +55,13 @@ const Notification = () => {
                 const { status } = await Notifications.requestPermissionsAsync();
                 finalStatus = status;
             }
-            if (finalStatus !== 'granted') {
-                alert('Failed to get push token for push notification!');
+            if (finalStatus !=='granted') {
+                console.log('Failed to get push token for push notification!');
                 return;
             }
             token = (await Notifications.getExpoPushTokenAsync()).data;
         } else {
-            alert('Must use physical device for Push Notifications');
+            console.log('Must use physical device for Push Notifications');
         }
 
         return token;
