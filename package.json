@@ -10,23 +10,22 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-    "@react-native-async-storage/async-storage": "^1.22.3",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^6.1.16",
     "@react-navigation/native-stack": "^6.9.25",
     "@reduxjs/toolkit": "^2.2.1",
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
     "axios": "^1.6.8",
-    "expo": "~50.0.13",
-    "expo-constants": "^15.4.5",
-    "expo-notifications": "~0.27.6",
-    "expo-status-bar": "~1.11.1",
-    "react": "18.2.0",
+    "expo": "^51.0.38",
+    "expo-constants": "~16.0.2",
+    "expo-notifications": "^0.28.19",
+    "expo-status-bar": "~1.12.1",
+    "react": "^18.2.0",
     "react-dom": "^17.0.0 || ^18.0.0",
-    "react-native": "0.73.4",
-    "react-native-safe-area-context": "4.8.2",
-    "react-native-screens": "~3.29.0",
-    "react-native-unimodules": "^0.14.10",
+    "react-native": "^0.74.5",
+    "react-native-safe-area-context": "^4.10.5",
+    "react-native-screens": "^3.31.1",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0"
@@ -34,5 +33,13 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "@xmldom/xmldom": "^0.8.13",
+    "postcss": "^8.5.10",
+    "send": "^0.19.0",
+    "tar": "^7.5.11",
+    "uuid": "^11.1.1",
+    "fast-xml-parser": "^5.7.0"
+  }
 }
