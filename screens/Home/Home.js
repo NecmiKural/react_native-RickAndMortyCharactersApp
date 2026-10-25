@@ -61,7 +61,8 @@ function Home({navigation}) {
         } else {
             try {
                 setIsLoadingMore(true);
-                const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
+                // Sanitize search term using encodeURIComponent to prevent URL parameter injection
+                const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${encodeURIComponent(searchTerm)}`);
                 const result = await response.json();
                 setData(result.results);
                 setIsLoaded(true);
