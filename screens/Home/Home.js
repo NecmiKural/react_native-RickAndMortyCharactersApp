@@ -61,7 +61,7 @@ function Home({navigation}) {
         } else {
             try {
                 setIsLoadingMore(true);
-                const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${searchTerm}`);
+                const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${encodeURIComponent(searchTerm)}`);
                 const result = await response.json();
                 setData(result.results);
                 setIsLoaded(true);
@@ -96,7 +96,7 @@ function Home({navigation}) {
     );
 
     if (error) {
-        return <Text>Error: {error.message}</Text>;
+        return <Text>An error occurred while loading data.</Text>;
     } else if (!isLoaded) {
         return <Text>Loading...</Text>;
     } else {
