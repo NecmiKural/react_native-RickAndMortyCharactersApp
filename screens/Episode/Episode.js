@@ -20,7 +20,8 @@ function Episodes({route}) {
             setCharacters([]);
         } else {
             try {
-                const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${searchTerm}`);
+                // Sanitize search term using encodeURIComponent to prevent URL parameter injection
+                const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(searchTerm)}`);
                 const result = await response.json();
                 setCharacters(result.results);
             } catch (error) {
