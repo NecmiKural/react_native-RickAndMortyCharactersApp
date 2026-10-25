@@ -1,0 +1,4 @@
+## 2024-03-09 - [Prevent HTTP Parameter Pollution in Fetch Requests]
+**Vulnerability:** URL Parameter Injection / HTTP Parameter Pollution due to unstructured string interpolation of user input directly into API URLs (`fetch(\`.../?name=${searchTerm}\`)`).
+**Learning:** React Native's `fetch` doesn't automatically encode URI components. Directly interpolating user input allows malicious users to inject additional query parameters (e.g., passing `&page=2` as `searchTerm`).
+**Prevention:** Always use `encodeURIComponent()` when inserting variable data into a URL query string, or better yet, use standard libraries like `URLSearchParams` or an HTTP client like `axios` that safely serializes parameter objects.

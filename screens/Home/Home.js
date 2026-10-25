@@ -97,7 +97,7 @@ function Home({navigation}) {
     );
 
     if (error) {
-        return <Text>Error: {error.message}</Text>;
+        return <Text>An error occurred while loading data.</Text>;
     } else if (!isLoaded) {
         return <Text>Loading...</Text>;
     } else {
