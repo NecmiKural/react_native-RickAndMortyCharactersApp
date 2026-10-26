@@ -25,17 +25,21 @@ function Episodes({route}) {
                 const result = await response.json();
                 setCharacters(result.results);
             } catch (error) {
-                console.error(error);
+                console.error('Failed to search characters');
             }
         }
     };
 
     useEffect(() => {
         const fetchEpisode = async () => {
-            const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
-            const data = await response.json();
-            setEpisode(data);
-            navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+            try {
+                const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
+                const data = await response.json();
+                setEpisode(data);
+                navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+            } catch (error) {
+                console.error('Failed to fetch episode details');
+            }
         };
 
         fetchEpisode();
@@ -43,11 +47,18 @@ function Episodes({route}) {
 
     useEffect(() => {
         const fetchCharacters = async () => {
-            const fetchedCharacters = await Promise.all(episode.characters.map(async (url) => {
-                const response = await fetch(url);
-                return await response.json();
-            }));
-            setCharacters(fetchedCharacters);
+            try {
+                const fetchedCharacters = await Promise.all(episode.characters.map(async (url) => {
+                    if (typeof url !== 'string' || !url.startsWith('https://rickandmortyapi.com/api/character/')) {
+                        throw new Error('Invalid character URL');
+                    }
+                    const response = await fetch(url);
+                    return await response.json();
+                }));
+                setCharacters(fetchedCharacters);
+            } catch (error) {
+                console.error('Failed to fetch characters');
+            }
         };
 
         if (episode) {
