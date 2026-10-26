@@ -25,18 +25,22 @@ function Episodes({route}) {
                 const result = await response.json();
                 setCharacters(result.results);
             } catch (error) {
-                console.error(error);
+                console.error('Failed to search characters');
             }
         }
     };
 
     useEffect(() => {
         const fetchEpisode = async () => {
-            // Sanitize route parameter episodeId to prevent path traversal / URL manipulation
-            const response = await fetch(`https://rickandmortyapi.com/api/episode/${encodeURIComponent(episodeId)}`);
-            const data = await response.json();
-            setEpisode(data);
-            navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+            try {
+                // Sanitize route parameter episodeId to prevent path traversal / URL manipulation
+                const response = await fetch(`https://rickandmortyapi.com/api/episode/${encodeURIComponent(episodeId)}`);
+                const data = await response.json();
+                setEpisode(data);
+                navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+            } catch (error) {
+                console.error('Failed to fetch episode details');
+            }
         };
 
         fetchEpisode();
@@ -44,13 +48,17 @@ function Episodes({route}) {
 
     useEffect(() => {
         const fetchCharacters = async () => {
-            // Validate character URLs to ensure requests are only sent to trusted API endpoints
-            const validUrls = (episode.characters || []).filter(url => typeof url === 'string' && url.startsWith('https://rickandmortyapi.com/'));
-            const fetchedCharacters = await Promise.all(validUrls.map(async (url) => {
-                const response = await fetch(url);
-                return await response.json();
-            }));
-            setCharacters(fetchedCharacters);
+            try {
+                // Validate character URLs to ensure requests are only sent to trusted API endpoints
+                const validUrls = (episode.characters || []).filter(url => typeof url === 'string' && url.startsWith('https://rickandmortyapi.com/api/character/'));
+                const fetchedCharacters = await Promise.all(validUrls.map(async (url) => {
+                    const response = await fetch(url);
+                    return await response.json();
+                }));
+                setCharacters(fetchedCharacters);
+            } catch (error) {
+                console.error('Failed to fetch characters');
+            }
         };
 
         if (episode) {
