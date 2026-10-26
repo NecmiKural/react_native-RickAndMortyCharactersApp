@@ -32,7 +32,8 @@ function Episodes({route}) {
 
     useEffect(() => {
         const fetchEpisode = async () => {
-            const response = await fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`);
+            // Sanitize route parameter episodeId to prevent path traversal / URL manipulation
+            const response = await fetch(`https://rickandmortyapi.com/api/episode/${encodeURIComponent(episodeId)}`);
             const data = await response.json();
             setEpisode(data);
             navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
@@ -43,7 +44,9 @@ function Episodes({route}) {
 
     useEffect(() => {
         const fetchCharacters = async () => {
-            const fetchedCharacters = await Promise.all(episode.characters.map(async (url) => {
+            // Validate character URLs to ensure requests are only sent to trusted API endpoints
+            const validUrls = (episode.characters || []).filter(url => typeof url === 'string' && url.startsWith('https://rickandmortyapi.com/'));
+            const fetchedCharacters = await Promise.all(validUrls.map(async (url) => {
                 const response = await fetch(url);
                 return await response.json();
             }));
