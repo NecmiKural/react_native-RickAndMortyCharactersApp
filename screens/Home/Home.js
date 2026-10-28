@@ -22,7 +22,8 @@ function Home({navigation}) {
     const getApiData = async (page) => {
         try {
             setIsLoadingMore(true);
-            const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${page}`);
+            // Sanitize page parameter using encodeURIComponent to prevent URL parameter injection
+            const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${encodeURIComponent(page)}`);
             const result = await response.json();
             setData(result.results);
             setIsLoaded(true);
