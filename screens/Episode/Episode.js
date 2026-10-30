@@ -22,8 +22,12 @@ function Episodes({route}) {
             try {
                 // Sanitize search term using encodeURIComponent to prevent URL parameter injection
                 const response = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(searchTerm)}`);
+                if (!response.ok) {
+                    setCharacters([]);
+                    return;
+                }
                 const result = await response.json();
-                setCharacters(result.results);
+                setCharacters(Array.isArray(result?.results) ? result.results : []);
             } catch (error) {
                 console.error('Failed to search characters');
             }
