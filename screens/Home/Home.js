@@ -24,8 +24,13 @@ function Home({navigation}) {
             setIsLoadingMore(true);
             // Sanitize page parameter using encodeURIComponent to prevent URL parameter injection
             const response = await fetch(`https://rickandmortyapi.com/api/episode?page=${encodeURIComponent(page)}`);
+            if (!response.ok) {
+                setData([]);
+                setIsLoaded(true);
+                return;
+            }
             const result = await response.json();
-            setData(result.results);
+            setData(Array.isArray(result?.results) ? result.results : []);
             setIsLoaded(true);
         } catch (error) {
             setError(error);
@@ -50,7 +55,7 @@ function Home({navigation}) {
     // her sezon için yapmak istersen 5 yap. ancak bu sefer apiye kullanıcı ilerledikçe istek atmalı ve gelen veriler ayrı bir listede tutularak parse edilmeli sayfa durumuna göre.
     const totalPages = 3;
     const paginationProps = {
-        totalItems: data.length + 1,
+        totalItems: (data || []).length + 1,
         itemsPerPage: currentPage,
         currentPage,
         totalPages
@@ -64,8 +69,13 @@ function Home({navigation}) {
                 setIsLoadingMore(true);
                 // Sanitize search term using encodeURIComponent to prevent URL parameter injection
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/?name=${encodeURIComponent(searchTerm)}`);
+                if (!response.ok) {
+                    setData([]);
+                    setIsLoaded(true);
+                    return;
+                }
                 const result = await response.json();
-                setData(result.results);
+                setData(Array.isArray(result?.results) ? result.results : []);
                 setIsLoaded(true);
             } catch (error) {
                 setError(error);
