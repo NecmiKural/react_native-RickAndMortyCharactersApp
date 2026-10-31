@@ -1,8 +1,14 @@
 import { TextInput, StyleSheet, TouchableOpacity, Button} from 'react-native';
 
 const SearchBar = ({term, onTermChange, onTermSubmit, holder}) => {
+    const handleSubmit = () => {
+        if (onTermSubmit) {
+            onTermSubmit();
+        }
+    };
+
     return (
-        <TouchableOpacity style={styles.backgroundStyle} onPress={onTermSubmit}>
+        <TouchableOpacity style={styles.backgroundStyle} onPress={handleSubmit}>
             <TextInput
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -10,8 +16,11 @@ const SearchBar = ({term, onTermChange, onTermSubmit, holder}) => {
                 placeholder={holder}
                 value={term}
                 onChangeText={onTermChange}
+                // Enforce maximum length to prevent DoS / unbounded input memory abuse
+                maxLength={100}
+                onSubmitEditing={handleSubmit}
             />
-            <Button title="Search" onPress={onTermSubmit} />
+            <Button title="Search" onPress={handleSubmit} />
         </TouchableOpacity>
     );
 };
