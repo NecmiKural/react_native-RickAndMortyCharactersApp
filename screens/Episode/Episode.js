@@ -39,9 +39,14 @@ function Episodes({route}) {
             try {
                 // Sanitize route parameter episodeId to prevent path traversal / URL manipulation
                 const response = await fetch(`https://rickandmortyapi.com/api/episode/${encodeURIComponent(episodeId)}`);
+                if (!response.ok) {
+                    return;
+                }
                 const data = await response.json();
-                setEpisode(data);
-                navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+                if (data && typeof data === 'object' && data.name) {
+                    setEpisode(data);
+                    navigation.setOptions({title: data.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+                }
             } catch (error) {
                 console.error('Failed to fetch episode details');
             }
@@ -57,9 +62,13 @@ function Episodes({route}) {
                 const validUrls = (episode.characters || []).filter(url => typeof url === 'string' && url.startsWith('https://rickandmortyapi.com/api/character/'));
                 const fetchedCharacters = await Promise.all(validUrls.map(async (url) => {
                     const response = await fetch(url);
+                    if (!response.ok) {
+                        return null;
+                    }
                     return await response.json();
                 }));
-                setCharacters(fetchedCharacters);
+                // Filter out null/invalid items to prevent state corruption and rendering errors
+                setCharacters(fetchedCharacters.filter(item => item && typeof item.id !== 'undefined'));
             } catch (error) {
                 console.error('Failed to fetch characters');
             }
@@ -100,7 +109,7 @@ function Episodes({route}) {
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={item => (item?.id ? item.id.toString() : '')}
             />
         </View>
     );
