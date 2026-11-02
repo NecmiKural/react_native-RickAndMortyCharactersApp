@@ -9,21 +9,35 @@ import {selectFavorites} from '../../redux/selectors/selector';
 function CharacterDetails() {
     const dispatch = useDispatch();
     const favorites = useSelector(selectFavorites) || [];
-    const character = useRoute().params.character;
+    const route = useRoute();
+    // Validate route parameters to prevent app crashes from malformed navigation state or deep links
+    const character = route?.params && typeof route.params.character === 'object' ? route.params.character : null;
     const navigation = useNavigation();
     const [characterData, setCharacterData] = useState(null);
-    const [isFavorite, setIsFavorite] = useState(favorites.some((favorite) => favorite.id === character.id));
+    const [isFavorite, setIsFavorite] = useState(
+        character && character.id ? favorites.some((favorite) => favorite.id === character.id) : false
+    );
 
     useEffect(() => {
-        setCharacterData(character);
-        navigation.setOptions({title: character.name, headerRight: () => <FavoritesButton navigation={navigation}/>});
+        if (character && character.id) {
+            setCharacterData(character);
+            navigation.setOptions({
+                title: character.name || 'Character',
+                headerRight: () => <FavoritesButton navigation={navigation}/>
+            });
+        }
     }, [character, navigation]);
 
     useEffect(() => {
-        setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
+        if (character && character.id) {
+            setIsFavorite(favorites.some((favorite) => favorite.id === character.id));
+        }
     }, [favorites, character]);
 
     const handleFavoritePress = () => {
+        if (!character || typeof character.id === 'undefined') {
+            return;
+        }
         if (isFavorite) {
             dispatch(removeFavorite(character));
         } else {
@@ -45,6 +59,10 @@ function CharacterDetails() {
         setIsFavorite(!isFavorite);
     };
 
+    if (!character || !character.id) {
+        return <Text style={styles.name}>Character details not found.</Text>;
+    }
+
     if (!characterData) {
         return <Text>Loading...</Text>;
     }
@@ -56,13 +74,13 @@ function CharacterDetails() {
                 resizeMode="cover"
                 source={{uri: characterData.image}}
             />
-            <Text style={styles.name}>{characterData.name}</Text>
-            <Text style={styles.status}>Status: {characterData.status}</Text>
-            <Text style={styles.species}>Species: {characterData.species}</Text>
+            <Text style={styles.name}>{characterData.name || 'Unknown'}</Text>
+            <Text style={styles.status}>Status: {characterData.status || 'Unknown'}</Text>
+            <Text style={styles.species}>Species: {characterData.species || 'Unknown'}</Text>
             <Text style={styles.type}>Type: {characterData.type || 'N/A'}</Text>
-            <Text style={styles.gender}>Gender: {characterData.gender}</Text>
-            <Text style={styles.origin}>Origin: {characterData.origin.name}</Text>
-            <Text style={styles.location}>Location: {characterData.location.name}</Text>
+            <Text style={styles.gender}>Gender: {characterData.gender || 'Unknown'}</Text>
+            <Text style={styles.origin}>Origin: {characterData.origin?.name || 'Unknown'}</Text>
+            <Text style={styles.location}>Location: {characterData.location?.name || 'Unknown'}</Text>
             <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
                 <Text
                     style={styles.favoriteButtonText}>{isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}</Text>
