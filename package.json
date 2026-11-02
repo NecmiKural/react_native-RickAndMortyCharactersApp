@@ -45,6 +45,8 @@
     "zod": "^4.6.7",
     "decode-uri-component": "^0.5.1",
     "brace-expansion": "^2.1.7",
-    "browserslist": "^4.29.5"
+    "browserslist": "^4.29.5",
+    "minimatch": "^11.0.4",
+    "glob": "^14.0.2"
   }
 }
